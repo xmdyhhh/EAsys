@@ -1,43 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <base href="http://localhost:8080/">
+    <base href="http://localhost:8080/student">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>管理员页面</title>
+    <title>学生页面</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo">管理员页面</div>
+        <div class="layui-logo">学生页面</div>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;" id="loginName">
-                    未登录
+                    贤心
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a href="admin/adminInfo.html">个人信息</a></dd>
                     <dd><a href="javascript:;" id="logout">退出</a></dd>
                 </dl>
             </li>
         </ul>
     </div>
 
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+        <legend>垂直导航菜单</legend>
+    </fieldset>
+
+
     <div class="layui-side layui-bg-black">
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree" lay-filter="test">
-                <li class="layui-nav-item"><a href="javascript:;" _url="admin/courses.html"><i class="layui-icon layui-icon-set"></i> 课程管理</a></li>
-                <li class="layui-nav-item"><a href="javascript:;" _url="admin/students.html"><i class="layui-icon layui-icon-set"></i> 学生管理</a></li>
-                <li class="layui-nav-item"><a href="javascript:;" _url="admin/teachers.html"><i class="layui-icon layui-icon-set"></i> 教师管理</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" _url="/student/selectedCourses.html"><i
+                        class="layui-icon layui-icon-list"></i> 已选课程</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" _url="/student/availableCourses.html"><i
+                        class="layui-icon layui-icon-add-circle"></i> 可选课程</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" _url="/student/courseteacher.html"><i
+                        class="layui-icon layui-icon-user"></i> 查看老师信息</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" _url="/student/detailcourse.html"><i
+                        class="layui-icon layui-icon-file-b"></i> 查看课程详情</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" _url="/student/mySchedule.html"><i
+                        class="layui-icon layui-icon-date"></i> 我的课表</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" _url="/student/studentInfo.html"><i
+                        class="layui-icon layui-icon-edit"></i> 修改个人信息</a></li>
             </ul>
         </div>
     </div>
 
     <div class="layui-body">
-        <!--   src里面是登陆后的初始网页，后续会根据ajax监听事件来修改src     -->
-        <iframe src="admin/courses.html" style="width:98%;height:98%;border: none;" id="main"></iframe>
+        <iframe id="main" src="/student/selectedCourses.html" style="width:100%;height:100%;"></iframe>
     </div>
 </div>
 <script src="/layui/layui.all.js"></script>
@@ -50,9 +62,6 @@
         // 将标签中的_url属性代表的页面显示在主题区域
         var url = $(this).attr("_url");
         $("#main").attr("src", url);
-        // 高亮当前选中的导航项
-        $(".layui-nav-item").removeClass("layui-this");
-        $(this).parent().addClass("layui-this");
     });
 
     // 退出功能
@@ -60,19 +69,18 @@
         layer.confirm("确认要退出吗？", function () {
             // 点击确认要执行的代码
             $.ajax({
-                url: 'admin/logout',
+                url: 'login/logout',
                 success: function () {
                     top.location.href = "login.html";
                 }
             });
         });
     });
-
-    document.addEventListener("DOMContentLoaded", function() {
-        fetch('/admin/getAdminName')
+   document.addEventListener("DOMContentLoaded", function() {
+        fetch('/student/getStudentName')
             .then(response => response.text())
-            .then(adminName => {
-                document.getElementById('loginName').innerText = adminName;
+            .then(studentName => {
+                document.getElementById('loginName').innerText = studentName;
             })
             .catch(error => console.error('Error fetching student name:', error));
     });

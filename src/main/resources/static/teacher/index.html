@@ -62,7 +62,7 @@
         layer.confirm("确认要退出吗？", function () {
             // 点击确认要执行的代码
             $.ajax({
-                url: 'login/logout',
+                url: 'teacher/logout',
                 success: function () {
                     top.location.href = "login.html";
                 }
@@ -71,7 +71,7 @@
     });
 
     document.addEventListener("DOMContentLoaded", function() {
-        fetch('/admin/getAdminName')
+        fetch('/teacher/getTeacherName')
             .then(response => response.text())
             .then(adminName => {
                 document.getElementById('loginName').innerText = adminName;

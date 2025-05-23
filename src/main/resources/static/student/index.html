@@ -4,13 +4,13 @@
     <base href="http://localhost:8080/">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>管理员页面</title>
+    <title>学生页面</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
 </head>
 <body class="layui-layout-body">
-<div class="layui-layout layui-layout-admin">
+<div class="layui-layout layui-layout-student">
     <div class="layui-header">
-        <div class="layui-logo">管理员页面</div>
+        <div class="layui-logo">学生页面</div>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;" id="loginName">
@@ -62,7 +62,7 @@
         layer.confirm("确认要退出吗？", function () {
             // 点击确认要执行的代码
             $.ajax({
-                url: 'login/logout',
+                url: 'student/logout',
                 success: function () {
                     top.location.href = "login.html";
                 }
@@ -71,7 +71,7 @@
     });
 
     document.addEventListener("DOMContentLoaded", function() {
-        fetch('/admin/getAdminName')
+        fetch('/student/getStudentName')
             .then(response => response.text())
             .then(adminName => {
                 document.getElementById('loginName').innerText = adminName;
