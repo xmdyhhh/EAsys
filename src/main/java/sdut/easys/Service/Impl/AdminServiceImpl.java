@@ -3,7 +3,7 @@ package sdut.easys.Service.Impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sdut.easys.Entity.Admin;
-import sdut.easys.Mapper.AdminMapper;
+import sdut.easys.mapper.AdminMapper;
 import sdut.easys.Service.AdminService;
 import sdut.easys.Util.Result;
 

@@ -3,7 +3,7 @@ package sdut.easys.Service.Impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sdut.easys.Entity.Teacher;
-import sdut.easys.Mapper.TeacherMapper;
+import sdut.easys.mapper.TeacherMapper;
 import sdut.easys.Service.TeacherService;
 import sdut.easys.Util.Result;
 

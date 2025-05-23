@@ -1,4 +1,4 @@
-package sdut.easys.Mapper;
+package sdut.easys.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;

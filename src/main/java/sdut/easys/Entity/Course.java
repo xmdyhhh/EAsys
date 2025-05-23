@@ -53,4 +53,10 @@ public class Course implements Serializable {
 
     // 教师ID
     private Integer teacherid;
+
+    // 教室
+    private String classroom;
+
+    // 教师名称
+    private String teachername;
 }

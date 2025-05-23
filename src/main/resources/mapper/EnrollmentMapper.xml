@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="sdut.easys.mapper.EnrollmentMapper">
+
+    <select id="getSelectedCourses" resultType="sdut.easys.Entity.Course">
+        SELECT *,
+               (SELECT teachername FROM teacher WHERE teacherid = course.teacherid) AS teachername
+        FROM course
+        WHERE courseid IN (
+            SELECT courseid
+            FROM enrollment
+            WHERE studentno = #{studentno} AND status = 'ENROLLED'
+        )
+    </select>
+    <select id="getAvailableCourses" resultType="sdut.easys.Entity.Course">
+        SELECT *,
+               (SELECT teachername FROM teacher WHERE teacherid = course.teacherid) AS teachername
+        FROM course
+        WHERE courseid IN (
+            SELECT courseid
+            FROM enrollment
+            WHERE studentno = #{studentno} AND status = 'PENDING'
+        )
+    </select>
+</mapper>

@@ -28,7 +28,7 @@ public class Schedule implements Serializable {
     private String teachername;
 
     // 教室名称
-    private String classroomname;
+    private String classroom;
 
     // 星期几
     private String dayofweek;

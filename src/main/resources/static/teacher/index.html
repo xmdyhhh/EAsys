@@ -4,20 +4,20 @@
     <base href="http://localhost:8080/">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>管理员页面</title>
+    <title>教师页面</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo">管理员页面</div>
+        <div class="layui-logo">教师页面</div>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;" id="loginName">
                     未登录
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a href="admin/adminInfo.html">个人信息</a></dd>
+                    <dd><a href="teacher/teacherInfo.html">个人信息</a></dd>
                     <dd><a href="javascript:;" id="logout">退出</a></dd>
                 </dl>
             </li>
@@ -28,18 +28,14 @@
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree" lay-filter="test">
-                <li class="layui-nav-item"><a href="javascript:;" _url="admin/allstudents.html"><i class="layui-icon layui-icon-set"></i> 学生管理</a></li>
-                <li class="layui-nav-item"><a href="javascript:;" _url="admin/allteachers.html"><i class="layui-icon layui-icon-set"></i> 教师管理</a></li>
-                <li class="layui-nav-item"><a href="javascript:;" _url="admin/allcourses.html"><i class="layui-icon layui-icon-set"></i> 课程管理</a></li>
-                <li class="layui-nav-item"><a href="javascript:;" _url="admin/updatepassword.html"><i class="layui-icon layui-icon-set"></i> 重置密码</a></li>
-                <li class="layui-nav-item"><a href="javascript:;" _url="admin/studentcredits.html"><i class="layui-icon layui-icon-set"></i> 学分管理</a></li>
+                <li class="layui-nav-item"><a href="javascript:;" _url="teacher/courses.html"><i class="layui-icon layui-icon-set"></i> 所教课程</a></li>
             </ul>
         </div>
     </div>
 
     <div class="layui-body">
         <!--   src里面是登陆后的初始网页，后续会根据ajax监听事件来修改src     -->
-        <iframe src="admin/allstudents.html" style="width:98%;height:98%;border: none;" id="main"></iframe>
+        <iframe src="teacher/courses.html" style="width:98%;height:98%;border: none;" id="main"></iframe>
     </div>
 </div>
 <script src="/layui/layui.all.js"></script>
@@ -62,7 +58,7 @@
         layer.confirm("确认要退出吗？", function () {
             // 点击确认要执行的代码
             $.ajax({
-                url: 'login/logout',
+                url: 'teacher/logout',
                 success: function () {
                     top.location.href = "login.html";
                 }
@@ -71,7 +67,7 @@
     });
 
     document.addEventListener("DOMContentLoaded", function() {
-        fetch('/admin/getAdminName')
+        fetch('/teacher/getTeacherName')
             .then(response => response.text())
             .then(adminName => {
                 document.getElementById('loginName').innerText = adminName;
