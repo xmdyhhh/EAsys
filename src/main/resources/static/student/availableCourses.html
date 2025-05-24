@@ -59,13 +59,12 @@
             ]],
             response: {
                 statusName: 'code',
-                statusCode: 0,
+                statusCode: 1,
                 msgName: 'message',
                 countName: 'count',
                 dataName: 'data'
             }
         });
-
         // 行内操作监听
         table.on("tool(datalist)", function (obj) {
             var event = obj.event;
@@ -76,18 +75,17 @@
                     $.ajax({
                         url: "/enrollment/selectcourse",
                         method: "POST",
-                        data: {courseid: data.courseid},
+                        data: { courseid: data.courseid },
                         success: function (result) {
-                            if (result.code === 0) {
-                                layer.closeAll();
+                            layer.closeAll();
+
+                            if (result.code === 1) {
+                                layer.msg(result.data || "选择成功", { icon: 1, time: 1800 });
+                                // 立即刷新表格
                                 table.reload("datalist");
-                                layer.msg(result.message || "选择成功", {icon: 1, time: 1800});
                             } else {
-                                layer.msg(result.message || "选课失败", {icon: 2, time: 1800});
+                                layer.msg(result.message || "选课失败", { icon: 2, time: 1800 });
                             }
-                        },
-                        error: function () {
-                            layer.msg("服务器错误，请重试", {icon: 2, time: 1800});
                         }
                     });
                 });
