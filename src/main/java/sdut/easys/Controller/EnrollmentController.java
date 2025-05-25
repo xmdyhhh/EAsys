@@ -1,6 +1,7 @@
 package sdut.easys.Controller;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,7 +16,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/enrollment")
+@Slf4j
 public class EnrollmentController {
+
     @Autowired
     private EnrollmentService enrollmentService;
 

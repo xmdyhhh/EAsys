@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="http://localhost:8080">
+    <meta charset="UTF-8">
+    <title>已完成课程</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+        .layui-table {
+            margin-top: 20px;
+        }
+
+        .layui-btn {
+            margin-right: 5px;
+        }
+
+        .layui-btn-normal {
+            background-color: #009688;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 表格容器 -->
+<table class="layui-table" id="datalist" lay-filter="datalist"></table>
+
+<!-- Layui 引入 -->
+<script src="/layui/layui.all.js"></script>
+<script>
+    layui.use(['table', 'jquery'], function () {
+        const table = layui.table;
+        const $ = layui.jquery;
+
+        // 初始化表格
+        table.render({
+            elem: '#datalist',
+            url: '/completed/list',
+            page: true,
+            limit: 10,
+            cols: [[
+                {field: 'courseid', title: '课程ID'},
+                {field: 'studentno',  title: '学号'},
+                {field: 'coursename', title: '课程名称'},
+                {field: 'grade', title: '成绩'}
+            ]],
+            response: {
+                statusName: 'code',
+                statusCode: 1, // 成功状态码
+                msgName: 'message',
+                countName: 'count',
+                dataName: 'data'
+            },
+            done: function (res, curr, count) {
+                // 可选：自定义处理数据或加载完成后的逻辑
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
