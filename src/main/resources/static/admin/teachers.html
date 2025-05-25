@@ -12,212 +12,248 @@
 
     .layui-form-label {
       width: 100px;
+      text-align: right;
+      padding-right: 10px;
     }
 
     .layui-input-block {
       margin-left: 120px;
     }
 
-    /* 确保表单项在同一行内对齐 */
     .layui-inline .layui-input-inline {
-      width: 200px; /* 根据需要调整宽度 */
-    }
-
-    .layui-inline .layui-form-label {
-      width: 100px;
-      text-align: right;
-      padding-right: 10px;
+      width: 200px;
     }
   </style>
 </head>
 <body>
-<table class="layui-table" lay-filter="datalist" id="teachertable"></table>
 
-
-
-<!--编辑窗口组件-->
-<div id="editWin" lay-filter="editWin" class="layui-form" style="display: none; padding: 20px;">
-  <input type="hidden" name="teacherid">
-
-  <!-- 使用 layui-inline 包裹每个表单项 -->
-  <div class="layui-form-item layui-inline">
-    <label class="layui-form-label"><i class="layui-icon layui-icon-username"></i> 教师姓名</label>
-    <div class="layui-input-inline">
-      <input type="text" name="teachername" placeholder="请输入教师姓名" autocomplete="off" class="layui-input" lay-verify="required">
-    </div>
+<!-- 查询区域 -->
+<div class="layui-form" style="margin: 15px;">
+  <div class="layui-inline">
+    <input type="text" id="teachername" placeholder="请输入姓名" class="layui-input">
   </div>
-
-
-  <div class="layui-form-item layui-inline">
-    <label class="layui-form-label"><i class="layui-icon layui-icon-username"></i> 教师工号</label>
-    <div class="layui-input-inline">
-      <input type="text" name="teacherno" placeholder="请输入教师工号" autocomplete="off" class="layui-input" lay-verify="required">
-    </div>
+  <div class="layui-inline">
+    <input type="text" id="username" placeholder="请输入工号" class="layui-input">
   </div>
-
-
-  <div class="layui-form-item layui-inline">
-    <label class="layui-form-label"><i class="layui-icon layui-icon-email"></i> 教师邮箱</label>
-    <div class="layui-input-inline">
-      <input type="email" name="email" placeholder="请输入教师邮箱" autocomplete="off" class="layui-input" lay-verify="email">
-    </div>
-  </div>
-
-  <div class="layui-form-item layui-inline">
-    <label class="layui-form-label"><i class="layui-icon layui-icon-note"></i> 教师电话</label>
-    <div class="layui-input-inline">
-      <input type="text" name="phone" placeholder="请输入教师电话" autocomplete="off" class="layui-input" lay-verify="required">
-    </div>
-  </div>
-
-  <div class="layui-form-item layui-inline">
-    <label class="layui-form-label"><i class="layui-icon layui-icon-note"></i> 教师办公室</label>
-    <div class="layui-input-inline">
-      <input type="text" name="office" placeholder="请输入教师办公室" autocomplete="off" class="layui-input" lay-verify="required">
-    </div>
-  </div>
-
-
+  <button class="layui-btn" lay-filter="search">查询</button>
+  <button class="layui-btn layui-btn-normal" lay-filter="add">新增教师</button>
 </div>
 
-<!--表格头部工具栏-->
-<script type="text/html" id="toptools">
-  <form class="layui-form layui-row layui-col-space4">
-    <div class="layui-form-item">
-      <div class="layui-col-sm1 layui-input-inline">
-        <input type="text" name="checktext" placeholder="请输入工号查找" autocomplete="off" class="layui-input">
-      </div>
-      <div class="layui-col-sm1 layui-input-inline">
-        <button type="button" class="layui-btn " lay-event="check">查询</button>
-<!--        暂时关闭-->
-<!--        <button type="button" class="layui-btn layui-btn-primary" lay-event="add">新增</button>-->
-      </div>
-    </div>
+<!-- 表格容器 -->
+<table class="layui-table" id="teacherTable" lay-filter="teacherTable"></table>
 
-  </form>
-
-</script>
-</script>
-<!--表格行内工具栏-->
-<script type="text/html" id="linetools">
-  <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</button>
-<!--  暂时关闭-->
-<!--  <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</button>-->
+<!-- 行内工具栏模板 -->
+<script type="text/html" id="toolBar">
+  <button class="layui-btn layui-btn-xs" lay-event="edit">编辑</button>
+  <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</button>
 </script>
 
+<!-- Layui 引入 -->
 <script src="/layui/layui.all.js"></script>
 <script>
+  layui.use(['table', 'jquery', 'layer', 'form'], function () {
+    const table = layui.table;
+    const $ = layui.jquery;
+    const layer = layui.layer;
+    const form = layui.form;
 
-  /*声明layui内部对象*/
-  const $ = layui.$;
-  var table = layui.table;
-  const form = layui.form;
-  var baseUrl = "http://localhost:8080/";
-
-  const layer = layui.layer;
-  layui.use(['table'],function (){
-    //渲染表格
-    table.render({
-      elem:'#teachertable',
-      url:'/teacher/list',
-      method:'get',
-      id:'datalist',
-      // page:true,
-      toolbar:'#toptools',
-      cols:[[
-        {field:'teachername',title:'姓名'},
-        {field:'teacherno',title:'工号'},
-        {field:'email',title:'邮箱'},
-        {field:'phone',title:'电话'},
-        {field:'office',title:'办公室'},
-        {field:'phone',title:'操作',toolbar:'#linetools'}
-      ]],
-      response: { // 定义返回数据格式
-        statusName: 'code', // 状态码字段名
-        statusCode: 0, // 成功状态码
-        msgName: 'msg', // 消息字段名
-        countName: 'count', // 总数字段名
-        dataName: 'data' // 数据列表字段名
-      },
-      parseData: function (res) { // 重写解析数据函数
-        return {
-          "code": res.code, // 状态码
-          "msg": res.msg, // 消息
-          "count": res.count, // 数据总数
-          "data": res.data // 数据列表
-        };
-      },
-      success:function (data){
-          console.log("表格数据加载成功");
-      },
-
-      error:function (data){
-        console.log("表格数据加载失败");
-        console.log(data);
-      }
-    })
-  })
-
-
-  /*声明表格头部工具栏时间*/
-  table.on("toolbar(datalist)", function (obj) {
-    var event = obj.event;
-    // var data = obj.data;
-
-    if(event == 'check') {
-      var checktext = $("[name='checktext']").val(); // 获取输入框的值
-      table.reload("datalist", {
-        // page: {
-        //   curr: 1 // 重载表格时从第一页开始
-        // },
-        where: {
-          teacherno:checktext // 使用获取到的值作为查询条件
+    // 初始化表格
+    const renderTable = function () {
+      table.render({
+        elem: '#teacherTable',
+        url: '/admin/teacherlist',
+        page: true,
+        limit: 10,
+        cols: [[
+          { field: 'teacherID', title: '教师ID' },
+          { field: 'teachername', title: '姓名' },
+          { field: 'username', title: '工号' },
+          { field: 'password', title: '密码' }, <!-- 新增密码列 -->
+          { field: 'sex', title: '性别' },
+          { field: 'birthYear', title: '出生年份' },
+          { field: 'degree', title: '学历' },
+          { field: 'title', title: '职称' },
+          { field: 'grade', title: '入职时间' },
+          { fixed: 'right', toolbar: '#toolBar', title: '操作' }
+        ]],
+        response: {
+          statusName: 'code',
+          statusCode: 1,
+          msgName: 'message',
+          countName: 'count',
+          dataName: 'data'
         }
-
       });
-      $("[name='checktext']").val(checktext);
-    }
+    };
 
-  });
+    // 页面加载时初始化表格
+    renderTable();
 
-  /*行内工具栏的监听事件*/
-  table.on("tool(datalist)", function (obj) {
-    var event = obj.event;
-    var data = obj.data; //点击按钮所在行的数据
-    if (event == 'edit') {
-      //点击编辑按钮执行的方法
-      form.val("editWin", data); //显示原始数据
-      //打开对话框
-      layer.open({
+    // 查询按钮点击事件
+    $('.layui-btn[lay-filter="search"]').on('click', function () {
+      table.reload('teacherTable', {
+        where: {
+          teachername: $('#teachername').val(),
+          username: $('#username').val()
+        },
+        page: { curr: 1 }
+      });
+    });
+
+    // 新增按钮点击事件
+    $('.layui-btn[lay-filter="add"]').on('click', function () {
+      openForm();
+    });
+
+    // 打开新增或编辑窗口
+    function openForm(data) {
+      const isEdit = !!data; // 是否为编辑模式
+
+      const index = layer.open({
         type: 1,
-        title: '编辑教师信息',
-        area: ['400px', '500px'],
-        content: $("#editWin"),
-        btn: ["保存"],
-        btn1: function () {
-          //获取表单数据
-          var formdata = form.val("editWin");
-          //提交数据
-          $.ajax({
-            method: "post",
-            url: "teacher/edit",
-            data: formdata,
-            success: function (result) {
-              //刷新表格
-              table.reload("datalist");
-              //关闭窗口
-              layer.closeAll();
-              //提示用户
-              layer.msg("保存成功", {icon: 1, time: 1800});
-            },
-            error:function (result){
-              layer.msgName("保存失败");
-            }
+        title: isEdit ? '编辑教师' : '新增教师',
+        area: ['600px', '520px'],
+        content: `
+          <form class="layui-form" style="padding: 20px;">
+            <!-- teacherID 隐藏域 -->
+            ${isEdit ? `<input type="hidden" name="teacherID" value="${data?.teacherID || ''}">` : ''}
+
+            <!-- 姓名 -->
+            <div class="layui-form-item">
+              <label class="layui-form-label">姓名</label>
+              <div class="layui-input-block">
+                <input type="text" name="teachername" required lay-verify="required"
+                       value="${data?.teachername || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <!-- 工号 -->
+            <div class="layui-form-item">
+              <label class="layui-form-label">工号</label>
+              <div class="layui-input-block">
+                <input type="text" name="username" required lay-verify="required"
+                       value="${data?.username || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <!-- 密码 -->
+            <div class="layui-form-item">
+              <label class="layui-form-label">密码</label>
+              <div class="layui-input-block">
+                <input type="password" name="password" required lay-verify="required"
+                       value="${data?.password || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <!-- 性别 -->
+            <div class="layui-form-item">
+              <label class="layui-form-label">性别</label>
+              <div class="layui-input-block">
+                <select name="sex" lay-verify="required">
+                  <option value="">请选择性别</option>
+                  <option value="男" ${data?.sex === '男' ? 'selected' : ''}>男</option>
+                  <option value="女" ${data?.sex === '女' ? 'selected' : ''}>女</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 出生年份 -->
+            <div class="layui-form-item">
+              <label class="layui-form-label">出生年份</label>
+              <div class="layui-input-block">
+                <input type="text" name="birthYear" required lay-verify="required"
+                       value="${data?.birthYear || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <!-- 学历 -->
+            <div class="layui-form-item">
+              <label class="layui-form-label">学历</label>
+              <div class="layui-input-block">
+                <input type="text" name="degree" required lay-verify="required"
+                       value="${data?.degree || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <!-- 职称 -->
+            <div class="layui-form-item">
+              <label class="layui-form-label">职称</label>
+              <div class="layui-input-block">
+                <input type="text" name="title" required lay-verify="required"
+                       value="${data?.title || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <!-- 入职时间 -->
+            <div class="layui-form-item">
+              <label class="layui-form-label">入职时间</label>
+              <div class="layui-input-block">
+                <input type="text" name="grade" required lay-verify="required"
+                       value="${data?.grade || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <!-- 提交按钮 -->
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="submitForm">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+              </div>
+            </div>
+          </form>
+        `,
+        success: function (layero, idx) {
+          form.render();
+
+          // 提交表单
+          form.on('submit(submitForm)', function (obj) {
+            const formData = obj.field;
+
+            $.ajax({
+              url: isEdit ? '/teacher/update' : '/teacher/add',
+              method: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify(formData),
+              success: function (res) {
+                if (res.code === 1) {
+                  layer.close(idx);
+                  renderTable();
+                  layer.msg("操作成功", { icon: 1 });
+                } else {
+                  layer.msg("操作失败：" + res.message, { icon: 2 });
+                }
+              }
+            });
+
+            return false; // 阻止默认提交
           });
         }
       });
     }
+
+    // 行内操作监听
+    table.on('tool(teacherTable)', function (obj) {
+      const event = obj.event;
+      const data = obj.data;
+
+      if (event === 'del') {
+        layer.confirm("确认删除该教师？", function (index) {
+          $.post('/teacher/delete', { teacherID: data.teacherID }, function (res) {
+            if (res.code === 1) {
+              layer.close(index);
+              renderTable();
+              layer.msg("删除成功", { icon: 1 });
+            } else {
+              layer.msg("删除失败：" + res.message, { icon: 2 });
+            }
+          });
+        });
+      } else if (event === 'edit') {
+        openForm(data);
+      }
+    });
   });
 </script>
+
 </body>
 </html>

@@ -1,10 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <base href="http://localhost:8080">
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title>我的课程 - 教师端</title>
+  <link rel="stylesheet" href="/layui/css/layui.css">
+  <style>
+    .layui-table {
+      margin-top: 20px;
+    }
+
+    .layui-btn-xs {
+      padding: 0 8px;
+    }
+  </style>
 </head>
 <body>
 
+<!-- 查询区域 -->
+<div class="layui-form" style="margin: 15px;">
+  <div class="layui-inline">
+    <input type="text" id="coursename" placeholder="请输入课程名称" class="layui-input">
+  </div>
+  <div class="layui-inline">
+    <input type="text" id="semester" placeholder="请输入学期" class="layui-input">
+  </div>
+  <button class="layui-btn" lay-options="" lay-filter="search">查询</button>
+  <button class="layui-btn layui-btn-normal" lay-options="" lay-filter="add">新增课程</button>
+</div>
+
+<!-- 表格容器 -->
+<table class="layui-table" id="courseTable" lay-filter="courseTable"></table>
+
+<!-- 表格行内工具栏模板 -->
+<script type="text/html" id="toolBar">
+  <button class="layui-btn layui-btn-xs" lay-event="edit">编辑</button>
+  <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</button>
+</script>
+
+<!-- Layui 引入 -->
+<script src="/layui/layui.all.js"></script>
+<script>
+  layui.use(['table', 'jquery', 'layer', 'form'], function () {
+    const table = layui.table;
+    const $ = layui.jquery;
+    const layer = layui.layer;
+    const form = layui.form;
+
+    let reloadTable = function () {
+      table.reload('courseTable', {
+        where: {
+          coursename: $('#coursename').val(),
+          semester: $('#semester').val()
+        },
+        page: { curr: 1 }
+      });
+    };
+
+    // 初始化表格
+    table.render({
+      elem: '#courseTable',
+      url: '/admin/courselist',
+      page: true,
+      limit: 10,
+      cols: [[
+        { field: 'courseid', title: '课程ID' },
+        { field: 'coursename', title: '课程名称' },
+        { field: 'credits', title: '学分' },
+        { field: 'semester', title: '学期' },
+        { field: 'classroom', title: '教室' },
+        { field: 'dayofweek', title: '星期几' },
+        { field: 'starttime', title: '开始时间' },
+        { field: 'endtime', title: '结束时间' },
+        { fixed: 'right', toolbar: '#toolBar', title: '操作' }
+      ]],
+      response: {
+        statusName: 'code',
+        statusCode: 1,
+        msgName: 'message',
+        countName: 'count',
+        dataName: 'data'
+      }
+    });
+
+    // 查询按钮点击事件
+    $('.layui-btn[lay-filter="search"]').on('click', function () {
+      reloadTable();
+    });
+
+    // 新增按钮点击事件
+    $('.layui-btn[lay-filter="add"]').on('click', function () {
+      openForm();
+    });
+
+    // 打开新增或编辑表单
+    function openForm(data) {
+      const index = layer.open({
+        type: 1,
+        title: data ? '编辑课程' : '新增课程',
+        area: ['600px', '450px'],
+        content: `
+          <form class="layui-form" style="padding: 20px;">
+            <input type="hidden" name="courseid" value="${data?.courseid || ''}">
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">课程名称</label>
+              <div class="layui-input-block">
+                <input type="text" name="coursename" required lay-verify="required"
+                       value="${data?.coursename || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">学分</label>
+              <div class="layui-input-block">
+                <input type="number" name="credits" step="0.1" required lay-verify="required"
+                       value="${data?.credits || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">学期</label>
+              <div class="layui-input-block">
+                <input type="text" name="semester" required lay-verify="required"
+                       value="${data?.semester || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">教室</label>
+              <div class="layui-input-block">
+                <input type="text" name="classroom" required lay-verify="required"
+                       value="${data?.classroom || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">星期几</label>
+              <div class="layui-input-block">
+                <input type="text" name="dayofweek" required lay-verify="required"
+                       value="${data?.dayofweek || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">开始时间</label>
+              <div class="layui-input-block">
+                <input type="time" name="starttime" required lay-verify="required"
+                       value="${data?.starttime || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">结束时间</label>
+              <div class="layui-input-block">
+                <input type="time" name="endtime" required lay-verify="required"
+                       value="${data?.endtime || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="submitForm">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+              </div>
+            </div>
+          </form>
+        `,
+        success: function (layero, index) {
+          form.render();
+
+          // 提交事件绑定
+          form.on('submit(submitForm)', function (obj) {
+            const formData = obj.field;
+
+            // 这里模拟 Ajax 提交
+            $.ajax({
+              url: data ? '/admin/updatecourse' : '/admin/addcourse',
+              method: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify(formData),
+              success: function (res) {
+                if (res.code === 1) {
+                  layer.close(index);
+                  reloadTable();
+                } else {
+                  layer.msg('保存失败：' + res.message, { icon: 2 });
+                }
+              }
+            });
+
+            return false; // 阻止默认跳转
+          });
+        }
+      });
+    }
+
+    // 行内操作监听
+    table.on('tool(courseTable)', function (obj) {
+      const event = obj.event;
+      const data = obj.data;
+
+      if (event === 'del') {
+        layer.confirm('确定要删除该课程？', function (index) {
+          // 发送删除请求
+          $.post('/admin/deletecourse', { courseid: data.courseid }, function (res) {
+            if (res.code === 1) {
+              layer.close(index);
+              reloadTable();
+            } else {
+              layer.msg('删除失败：' + res.message, { icon: 2 });
+            }
+          });
+        });
+      } else if (event === 'edit') {
+        openForm(data);
+      }
+    });
+  });
+</script>
 </body>
 </html>

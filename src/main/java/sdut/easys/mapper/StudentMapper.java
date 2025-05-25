@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Update;
 import sdut.easys.Entity.Student;
 import sdut.easys.Entity.StudentInfo;
 
+import java.util.List;
+
 @Mapper
 public interface StudentMapper {
     @Select("select * from student where username = #{username}")
@@ -21,4 +23,10 @@ public interface StudentMapper {
 
     @Select("SELECT * FROM student WHERE studentno = #{studentno}")
     Student getByStudentNo(String studentno);
+
+    @Select("SELECT * FROM student")
+    List<Student> getStudentList();
+
+    @Select("SELECT COUNT(*) FROM student")
+    int getStudentCount();
 }

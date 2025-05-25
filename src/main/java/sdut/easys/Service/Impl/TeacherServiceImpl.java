@@ -7,6 +7,8 @@ import sdut.easys.mapper.TeacherMapper;
 import sdut.easys.Service.TeacherService;
 import sdut.easys.Util.Result;
 
+import java.util.List;
+
 @Service
 public class TeacherServiceImpl implements TeacherService {
 
@@ -23,5 +25,25 @@ public class TeacherServiceImpl implements TeacherService {
         } else {
             return Result.success(teacher);
         }
+    }
+
+    @Override
+    public Integer getTeacherID(String username) {
+        return teacherMapper.getTeacherID(username);
+    }
+
+    @Override
+    public boolean saveScore(Long courseId, Double grade, String studentNo) {
+        return teacherMapper.saveScore(courseId, grade, studentNo) > 0;
+    }
+
+    @Override
+    public List<Teacher> getTeacherList() {
+        return teacherMapper.getTeacherList();
+    }
+
+    @Override
+    public int getTeacherCount() {
+        return teacherMapper.getTeacherCount();
     }
 }

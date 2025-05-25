@@ -1,10 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <base href="http://localhost:8080">
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>我的课程 - 教师端</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+        .layui-table {
+            margin-top: 20px;
+        }
+
+        .layui-btn {
+            margin-right: 5px;
+        }
+
+        .layui-btn-xs {
+            padding: 0 8px;
+        }
+    </style>
 </head>
 <body>
+
+<!-- 表格容器 -->
+<table class="layui-table" id="courseTable" lay-filter="courseTable"></table>
+
+<!-- 表格行内工具栏模板 -->
+<script type="text/html" id="scoreTool">
+    <button class="layui-btn layui-btn-xs" lay-event="view">查看成绩</button>
+</script>
+
+<!-- Layui 引入 -->
+<script src="/layui/layui.all.js"></script>
+<script>
+    layui.use(['table', 'jquery'], function () {
+        const table = layui.table;
+        const $ = layui.jquery;
+
+        // 初始化表格
+        table.render({
+            elem: '#courseTable',
+            url: '/teacher/getTeacherCourse', // 后端接口
+            page: true,
+            limit: 10,
+            cols: [[
+                { field: 'courseid', title: '课程ID' },
+                { field: 'coursename', title: '课程名称' },
+                { field: 'credits', title: '学分' },
+                { field: 'semester', title: '学期' },
+                { toolbar: '#scoreTool', title: '操作' }
+            ]],
+            response: {
+                statusName: 'code',
+                statusCode: 1,
+                msgName: 'message',
+                countName: 'count',
+                dataName: 'data'
+            }
+        });
+
+        // 行内操作监听
+        table.on('tool(courseTable)', function (obj) {
+            const event = obj.event;
+            const data = obj.data;
+
+            if (event === 'view') {
+                // 跳转到 score.html 并携带 courseid 参数
+                window.location.href = '/teacher/score.html?courseid=' + data.courseid;
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

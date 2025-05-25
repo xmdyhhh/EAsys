@@ -10,6 +10,8 @@ import sdut.easys.mapper.StudentMapper;
 import sdut.easys.Service.StudentService;
 import sdut.easys.Util.Result;
 
+import java.util.List;
+
 @Service
 @Slf4j
 public class StudentServiceImpl implements StudentService {
@@ -64,5 +66,15 @@ public class StudentServiceImpl implements StudentService {
             log.error("更新学生信息失败", e);
             return Result.error("系统异常，请稍后再试");
         }
+    }
+
+    @Override
+    public List<Student> getStudentList() {
+        return studentMapper.getStudentList();
+    }
+
+    @Override
+    public int getStudentCount() {
+        return studentMapper.getStudentCount();
     }
 }

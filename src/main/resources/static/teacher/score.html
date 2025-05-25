@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="http://localhost:8080">
+    <meta charset="UTF-8">
+    <title>课程成绩 - 教师端</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+        .layui-table {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2 style="margin: 20px;">课程成绩列表</h2>
+
+<!-- 成绩表格容器 -->
+<table class="layui-table" id="scoreTable" lay-filter="scoreTable"></table>
+
+<!-- 表格行内工具栏模板 -->
+<script type="text/html" id="gradeTool">
+    {{# if(d.grade === null){ }}
+    <button class="layui-btn layui-btn-xs" lay-event="score">评分</button>
+    {{# } else { }}
+    {{d.grade}}
+    {{# } }}
+</script>
+
+<!-- Layui 引入 -->
+<script src="/layui/layui.all.js"></script>
+<script>
+    layui.use(['table', 'layer', 'form', 'jquery'], function () {
+        const table = layui.table;
+        const layer = layui.layer;
+        const form = layui.form;
+        const $ = layui.jquery;
+
+        // 获取 URL 中的 courseid 参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('courseid');
+
+        // 渲染成绩表格
+        table.render({
+            elem: '#scoreTable',
+            url: '/teacher/getScoreByCourseid?courseid=' + courseId,
+            page: true,
+            limit: 15,
+            cols: [[
+                { field: 'studentno', title: '学号' },
+                { field: 'coursename', title: '课程名称' },
+                { toolbar: '#gradeTool', title: '成绩' }
+            ]],
+            response: {
+                statusName: 'code',
+                statusCode: 1,
+                msgName: 'message',
+                countName: 'count',
+                dataName: 'data'
+            }
+        });
+
+        // 行内操作监听
+        table.on('tool(scoreTable)', function (obj) {
+            const event = obj.event;
+            const data = obj.data;
+
+            if (event === 'score') {
+                // 弹出评分窗口
+                layer.open({
+                    type: 1,
+                    title: '为学生评分',
+                    content: `
+                        <form class="layui-form" style="padding:20px;">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">课程编号</label>
+                                <div class="layui-input-block">
+                                    <input type="text" value="${data.courseid}" disabled class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">课程名称</label>
+                                <div class="layui-input-block">
+                                    <input type="text" value="${data.coursename}" disabled class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">学号</label>
+                                <div class="layui-input-block">
+                                    <input type="text" value="${data.studentno}" disabled class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">输入分数</label>
+                                <div class="layui-input-block">
+                                    <input type="number" name="grade" required lay-verify="required" placeholder="请输入分数" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit lay-filter="submitScore">提交评分</button>
+                                </div>
+                            </div>
+                        </form>
+                    `,
+                    success: function (layero, index) {
+                        form.on('submit(submitScore)', function (formData) {
+                            const grade = formData.field.grade;
+                            // 提交评分请求
+                            $.ajax({
+                                url: '/teacher/score',
+                                method: 'POST',
+                                data: {
+                                    courseid: data.courseid,
+                                    studentno: data.studentno,
+                                    grade: grade
+                                },
+                                success: function (res) {
+                                    layer.close(index);
+                                    layer.msg('评分成功', { icon: 1, time: 1500 });
+                                    table.reload('scoreTable');
+                                },
+                                error: function () {
+                                    layer.msg('服务器错误', { icon: 2, time: 1500 });
+                                }
+                            });
+                            return false; // 阻止默认提交
+                        });
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

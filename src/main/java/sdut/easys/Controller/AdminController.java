@@ -5,15 +5,30 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sdut.easys.Entity.Admin;
+import sdut.easys.Entity.Course;
+import sdut.easys.Entity.Student;
+import sdut.easys.Entity.Teacher;
 import sdut.easys.Service.AdminService;
+import sdut.easys.Service.CourseService;
+import sdut.easys.Service.StudentService;
+import sdut.easys.Service.TeacherService;
 import sdut.easys.Util.Result;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
 @Slf4j
 public class AdminController {
+
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private CourseService courseService;
+    @Autowired
+    private StudentService studentService;
+    @Autowired
+    private TeacherService teacherService;
 
     @PostMapping("/login")
     public Result<Admin> login(@RequestParam("username") String username,
@@ -45,5 +60,26 @@ public class AdminController {
             return admin.getUsername();
         }
         return null;
+    }
+
+    @GetMapping("/courselist")
+    public Object getCourseList() {
+        List<Course> courses =courseService.getCourseList();
+        int count = courseService.getCourseCount();
+        return Result.success(courses, count);
+    }
+
+    @GetMapping("/studentlist")
+    public Object getStudentList() {
+        List<Student> students = studentService.getStudentList();
+        int count = studentService.getStudentCount();
+        return Result.success(students, count);
+    }
+
+    @GetMapping("/teacherlist")
+    public Object getTeacherList() {
+        List<Teacher> teachers = teacherService.getTeacherList();
+        int count = teacherService.getTeacherCount();
+        return Result.success(teachers, count);
     }
 }
