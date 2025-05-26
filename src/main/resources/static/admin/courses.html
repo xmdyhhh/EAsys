@@ -176,7 +176,7 @@
 
             // 这里模拟 Ajax 提交
             $.ajax({
-              url: data ? '/admin/updatecourse' : '/admin/addcourse',
+              url: data ? '/course/update' : '/course/add',
               method: 'POST',
               contentType: 'application/json',
               data: JSON.stringify(formData),
@@ -204,7 +204,7 @@
       if (event === 'del') {
         layer.confirm('确定要删除该课程？', function (index) {
           // 发送删除请求
-          $.post('/admin/deletecourse', { courseid: data.courseid }, function (res) {
+          $.post('/course/delete', { courseid: data.courseid }, function (res) {
             if (res.code === 1) {
               layer.close(index);
               reloadTable();

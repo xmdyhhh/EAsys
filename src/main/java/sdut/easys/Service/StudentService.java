@@ -16,4 +16,10 @@ public interface StudentService {
     List<Student> getStudentList();
 
     int getStudentCount();
+
+    boolean addStudent(Student student);
+
+    boolean updateStudent(Student student);
+
+    boolean deleteStudent(int studentID);
 }

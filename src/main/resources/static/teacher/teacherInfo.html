@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教师信息修改</title>
+    <!-- 引入Layui CSS -->
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <!-- 引入jQuery -->
+    <script src="/js/jquery-1.11.0.min.js"></script>
+    <!-- 引入Layui JS -->
+    <script src="/layui/layui.all.js"></script>
+    <style>
+        body {
+            background-color: #f2f2f2;
+        }
+
+        #editForm {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #e2e2e2;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1050;
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1040;
+        }
+
+        .layui-title {
+            color: #009688;
+        }
+
+        .layui-btn-primary {
+            background-color: #009688;
+            color: white;
+        }
+
+        .layui-btn-primary:hover {
+            background-color: #00867a;
+        }
+    </style>
+</head>
+
+<body>
+<div class="layui-container mt-5">
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <h2 class="layui-title text-center">教师信息</h2>
+            <table id="teacherInfoTable" class="layui-table">
+                <thead>
+                <tr>
+                    <th>字段</th>
+                    <th>信息</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- 数据将通过JavaScript动态插入 -->
+                </tbody>
+            </table>
+            <div class="layui-col-md12 text-center">
+                <button id="editButton" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe642;</i> 编辑信息</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 遮罩层 -->
+<div id="overlay"></div>
+
+<!-- 编辑表单弹窗 -->
+<div id="editForm" class="layui-form layui-card">
+    <h3 class="layui-card-header text-center">编辑教师信息</h3>
+    <div class="layui-card-body">
+        <form id="editTeacherForm">
+            <!-- 只读字段 -->
+            <input type="hidden" id="editTeacherID" name="teacherID">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">工号</label>
+                <div class="layui-input-block">
+                    <input type="text" id="editUsername" name="username" readonly class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-block">
+                    <input type="password" id="editPassword" name="password" class="layui-input" placeholder="留空则不修改">
+                    <p class="layui-form-mid layui-word-aux">留空则不修改密码</p>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">姓名</label>
+                <div class="layui-input-block">
+                    <input type="text" id="editTeachername" name="teachername" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-block">
+                    <select id="editSex" name="sex" lay-filter="editSex">
+                        <option value="">请选择性别</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">出生年份</label>
+                <div class="layui-input-block">
+                    <input type="text" id="editBirthYear" name="birthYear" class="layui-input" placeholder="YYYY-MM-DD">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">学历</label>
+                <div class="layui-input-block">
+                    <input type="text" id="editDegree" name="degree" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">职称</label>
+                <div class="layui-input-block">
+                    <input type="text" id="editTitle" name="title" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">入职时间</label>
+                <div class="layui-input-block">
+                    <input type="text" id="editGrade" name="grade" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属学院ID</label>
+                <div class="layui-input-block">
+                    <input type="text" id="editCollegeID" name="collegeID" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item text-center">
+                <button id="saveEditButton" class="layui-btn layui-btn-normal"><i class="layui-icon">&#xe605;</i> 保存修改</button>
+                <button id="cancelEditButton" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe601;</i> 取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'layer', 'jquery'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+
+        // ================== 获取教师信息并渲染页面 ==================
+        function loadTeacherInfo() {
+            $.ajax({
+                url: '/teacher/getInfo',
+                method: 'GET',
+                success: function (data) {
+                    var tableBody = $('#teacherInfoTable tbody');
+                    tableBody.empty()
+                        .append(`<tr><td>ID</td><td>${data.teacherID}</td></tr>`)
+                        .append(`<tr><td>工号</td><td>${data.username}</td></tr>`)
+                        .append(`<tr><td>姓名</td><td>${data.teachername}</td></tr>`)
+                        .append(`<tr><td>性别</td><td>${data.sex}</td></tr>`)
+                        .append(`<tr><td>出生年份</td><td>${data.birthYear}</td></tr>`)
+                        .append(`<tr><td>学历</td><td>${data.degree}</td></tr>`)
+                        .append(`<tr><td>职称</td><td>${data.title}</td></tr>`)
+                        .append(`<tr><td>入职时间</td><td>${data.grade}</td></tr>`)
+                        .append(`<tr><td>所属学院ID</td><td>${data.collegeID}</td></tr>`)
+
+                    // 填充编辑表单
+                    $('#editTeacherID').val(data.teacherID);
+                    $('#editUsername').val(data.username);
+                    $('#editTeachername').val(data.teachername);
+                    $('#editPassword').val(data.password);
+                    $('#editSex').val(data.sex);
+                    $('#editBirthYear').val(data.birthYear);
+                    $('#editDegree').val(data.degree);
+                    $('#editTitle').val(data.title);
+                    $('#editGrade').val(data.grade);
+                    $('#editCollegeID').val(data.collegeID);
+
+                    // 渲染下拉框
+                    layui.form.render('select');
+                },
+                error: function (xhr, status, error) {
+                    console.error('获取教师信息失败:', error);
+                    layer.msg('获取教师信息失败，请重试。', {icon: 2});
+                }
+            });
+        }
+
+        // 初始化加载数据
+        loadTeacherInfo();
+
+        // 显示编辑表单
+        $('#editButton').click(function () {
+            $('#overlay').show();
+            $('#editForm').show();
+        });
+
+        // 取消编辑
+        $('#cancelEditButton').click(function (e) {
+            e.preventDefault();
+            $('#editForm').hide();
+            $('#overlay').hide();
+        });
+
+        // 保存修改
+        $('#saveEditButton').click(function (e) {
+            e.preventDefault();
+
+            var editedData = {
+                teacherID: $('#editTeacherID').val(),
+                username: $('#editUsername').val(),
+                password: $('#editPassword').val().trim() || undefined,
+                teachername: $('#editTeachername').val(),
+                sex: $('#editSex').val(),
+                birthYear: $('#editBirthYear').val(),
+                degree: $('#editDegree').val(),
+                title: $('#editTitle').val(),
+                grade: $('#editGrade').val(),
+                collegeID: $('#editCollegeID').val()
+            };
+
+            $.ajax({
+                url: '/teacher/updateInfo',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(editedData),
+                success: function (response) {
+                    $('#editForm').hide();
+                    $('#overlay').hide();
+
+                    // 刷新表格
+                    $('#teacherInfoTable tbody').empty()
+                        .append(`<tr><td>ID</td><td>${editedData.teacherID}</td></tr>`)
+                        .append(`<tr><td>工号</td><td>${editedData.username}</td></tr>`)
+                        .append(`<tr><td>姓名</td><td>${editedData.teachername}</td></tr>`)
+                        .append(`<tr><td>性别</td><td>${editedData.sex}</td></tr>`)
+                        .append(`<tr><td>出生年份</td><td>${editedData.birthYear}</td></tr>`)
+                        .append(`<tr><td>学历</td><td>${editedData.degree}</td></tr>`)
+                        .append(`<tr><td>职称</td><td>${editedData.title}</td></tr>`)
+                        .append(`<tr><td>入职时间</td><td>${editedData.grade}</td></tr>`)
+                        .append(`<tr><td>所属学院ID</td><td>${editedData.collegeID}</td></tr>`);
+
+                    layer.msg('信息修改成功。', {icon: 1});
+                },
+                error: function (xhr, status, error) {
+                    console.error('信息修改失败:', error);
+                    layer.msg('信息修改失败，请重试。', {icon: 2});
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

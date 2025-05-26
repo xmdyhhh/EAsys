@@ -8,9 +8,6 @@ import sdut.easys.Entity.Student;
 import sdut.easys.Entity.StudentInfo;
 import sdut.easys.Service.StudentService;
 import sdut.easys.Util.Result;
-import sdut.easys.mapper.StudentMapper;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/student")
@@ -19,8 +16,7 @@ public class StudentController {
 
     @Autowired
     private StudentService studentService;
-    @Autowired
-    private StudentMapper  studentMapper;
+
 
     @PostMapping("/login")
     public Result<Student> login(@RequestParam("username") String username,
@@ -77,5 +73,35 @@ public class StudentController {
         }
         session.setAttribute("student", newStudent);
         return Result.success(newStudent);
+    }
+
+    @PostMapping("/add")
+    public Result<String> addStudent(@RequestBody Student student){
+        boolean success = studentService.addStudent(student);
+        if (success){
+            return Result.success("添加成功");
+        }else {
+            return Result.error("添加失败");
+        }
+    }
+
+    @PutMapping("/update")
+    public Result<String> updateStudent(@RequestBody Student student){
+        boolean success = studentService.updateStudent(student);
+        if (success){
+            return Result.success("更新成功");
+        }else {
+            return Result.error("更新失败");
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public Result<String> deleteStudent(@RequestParam("studentID") int studentID){
+        boolean success = studentService.deleteStudent(studentID);
+        if (success){
+            return Result.success("删除成功");
+        }else {
+            return Result.error("删除失败");
+        }
     }
 }

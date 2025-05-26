@@ -1,8 +1,6 @@
 package sdut.easys.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import sdut.easys.Entity.Student;
 import sdut.easys.Entity.StudentInfo;
 
@@ -29,4 +27,13 @@ public interface StudentMapper {
 
     @Select("SELECT COUNT(*) FROM student")
     int getStudentCount();
+
+    @Insert("INSERT INTO student(username,password,studentname,studentno,sex,birthYear,email,major,grade,collegeID) VALUES(#{username},#{password},#{studentname},#{studentno},#{sex},#{birthYear},#{email},#{major},#{grade},#{collegeID})")
+    int addStudent(Student student);
+
+    @Update("UPDATE student SET username = #{username},password = #{password},studentname= #{studentname},sex = #{sex}, birthYear = #{birthYear}, email = #{email}, major = #{major}, grade = #{grade}, collegeID = #{collegeID} WHERE studentID = #{studentID}")
+    int updateStudent(Student student);
+
+    @Delete("DELETE FROM student WHERE studentID = #{studentID}")
+    int deleteStudent(int studentID);
 }

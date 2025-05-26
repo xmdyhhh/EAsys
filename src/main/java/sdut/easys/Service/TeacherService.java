@@ -15,4 +15,14 @@ public interface TeacherService {
     List<Teacher> getTeacherList();
 
     int getTeacherCount();
+
+    boolean deleteTeacher(int teacherID);
+
+    boolean addTeacher(Teacher teacher);
+
+    boolean updateTeacher(Teacher teacher);
+
+    Teacher getInfo(int teacherID);
+
+    Teacher updateInfo(Teacher teacher);
 }

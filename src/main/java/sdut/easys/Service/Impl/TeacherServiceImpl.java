@@ -46,4 +46,30 @@ public class TeacherServiceImpl implements TeacherService {
     public int getTeacherCount() {
         return teacherMapper.getTeacherCount();
     }
+
+    @Override
+    public boolean deleteTeacher(int teacherID) {
+        return teacherMapper.deleteTeacher(teacherID) > 0;
+    }
+
+    @Override
+    public boolean addTeacher(Teacher teacher) {
+        return teacherMapper.addTeacher(teacher) > 0;
+    }
+
+    @Override
+    public boolean updateTeacher(Teacher teacher) {
+        return teacherMapper.updateTeacher(teacher) > 0;
+    }
+
+    @Override
+    public Teacher getInfo(int teacherID) {
+        return teacherMapper.getInfo(teacherID);
+    }
+
+    @Override
+    public Teacher updateInfo(Teacher teacher) {
+        return teacherMapper.updateInfo(teacher);
+    }
+
 }

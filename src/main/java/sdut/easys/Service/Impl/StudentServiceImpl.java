@@ -77,4 +77,19 @@ public class StudentServiceImpl implements StudentService {
     public int getStudentCount() {
         return studentMapper.getStudentCount();
     }
+
+    @Override
+    public boolean addStudent(Student student) {
+        return studentMapper.addStudent(student) > 0;
+    }
+
+    @Override
+    public boolean updateStudent(Student student) {
+        return studentMapper.updateStudent(student) > 0;
+    }
+
+    @Override
+    public boolean deleteStudent(int studentID) {
+        return studentMapper.deleteStudent(studentID) > 0;
+    }
 }

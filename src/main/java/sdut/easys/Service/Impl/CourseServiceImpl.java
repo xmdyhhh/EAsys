@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import sdut.easys.Entity.CompletedCourse;
 import sdut.easys.Entity.Course;
 import sdut.easys.Service.CourseService;
+import sdut.easys.dto.CourseDTO;
 import sdut.easys.mapper.CourseMapper;
 
 import java.util.List;
@@ -33,5 +34,20 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public int getCourseCount() {
         return courseMapper.getCourseCount();
+    }
+
+    @Override
+    public boolean addCourse(CourseDTO courseDTO) {
+        return courseMapper.addCourse(courseDTO) > 0;
+    }
+
+    @Override
+    public boolean updateCourse(CourseDTO courseDTO) {
+        return courseMapper.updateCourse(courseDTO) > 0;
+    }
+
+    @Override
+    public boolean deleteCourse(int courseID) {
+        return courseMapper.deleteCourse(courseID) > 0;
     }
 }
