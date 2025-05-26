@@ -24,4 +24,28 @@ public class AdminServiceImpl implements AdminService {
             return Result.success(admin);
         }
     }
+
+    @Override
+    public int getAdminID(String username) {
+        return adminMapper.getAdminID(username);
+    }
+
+    @Override
+    public Result<Admin> getInfo(int adminID) {
+        Admin admin = adminMapper.getInfo(adminID);
+        if (admin == null) {
+            return Result.error("管理员不存在");
+        }
+        return Result.success(admin);
+    }
+
+    @Override
+    public Result<String> updateInfo(Admin admin) {
+        int rows = adminMapper.updateInfo(admin);
+        if (rows > 0) {
+            return Result.success("更新成功");
+        } else {
+            return Result.error("更新失败");
+        }
+    }
 }

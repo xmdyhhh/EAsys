@@ -183,7 +183,7 @@
         // ================== 获取学生信息并渲染页面 ==================
         function loadStudentInfo() {
             $.ajax({
-                url: '/student/getInfo',
+                url: '/student/getinfo',
                 method: 'GET',
                 success: function (data) {
                     var tableBody = $('#studentInfoTable tbody');
@@ -262,7 +262,7 @@
 
             // 发送请求更新
             $.ajax({
-                url: '/student/updateInfo',
+                url: '/student/updateinfo',
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(editedData),

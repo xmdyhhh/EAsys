@@ -47,7 +47,7 @@ public class StudentController {
         return null;
     }
 
-    @GetMapping("/getInfo")
+    @GetMapping("/getinfo")
     public StudentInfo getInfo(HttpSession session) {
         Student student = (Student) session.getAttribute("student");
         String studentno = student.getStudentno();
@@ -60,7 +60,7 @@ public class StudentController {
     /**
      * 更新学生信息接口
      */
-    @PostMapping("/updateInfo")
+    @PostMapping("/updateinfo")
     public Result<Student> updateInfo(@RequestBody StudentInfo studentInfo, HttpSession session) {
         // 获取登录用户
         Student nowStudent = (Student) session.getAttribute("student");

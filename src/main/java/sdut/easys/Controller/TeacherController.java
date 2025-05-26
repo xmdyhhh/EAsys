@@ -53,28 +53,30 @@ public class TeacherController {
         return null;
     }
 
-    @GetMapping("/getInfo")
-    public Teacher getInfo(HttpSession session) {
+    @GetMapping("/getinfo")
+    public Result<Teacher> getInfo(HttpSession session) {
         Teacher teacher = (Teacher) session.getAttribute("teacher");
         int teacherID = teacherService.getTeacherID(teacher.getUsername());
-        if (teacher != null) {
-            return teacherService.getInfo(teacherID);
+        if (teacher == null) {
+            return Result.error("未登录");
         }
-        return null;
+        return teacherService.getInfo(teacherID);
     }
 
-    @PostMapping("/updateInfo")
+    @PostMapping("/updateinfo")
     public Result<String> updateInfo(@RequestBody Teacher teacher, HttpSession session) {
         Teacher nowTeacher = (Teacher) session.getAttribute("teacher");
         if (nowTeacher == null) {
             return Result.error("未登录");
         }
-        Teacher newTeacher = teacherService.updateInfo(teacher);
-        if (newTeacher == null) {
-            return Result.error("更新失败");
+        // 执行更新
+        Result<String> result = teacherService.updateInfo(teacher);
+        if (result.getCode() == 1) {
+            // 更新成功后重新查询最新信息
+            Teacher updatedTeacher = teacherService.getInfo(teacher.getTeacherID()).getData();
+            session.setAttribute("teacher", updatedTeacher); // 更新 session 中的对象
         }
-        session.setAttribute("teacher", newTeacher);
-        return Result.success("更新成功");
+        return result;
     }
 
     @GetMapping("/getTeacherCourse")

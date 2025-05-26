@@ -33,14 +33,14 @@
     <div class="layui-form-item">
         <label class="layui-form-label">管理员ID</label>
         <div class="layui-input-block">
-            <input type="text" id="adminid" name="adminid" readonly class="layui-input">
+            <input type="text" id="adminid" name="adminID" readonly class="layui-input">
         </div>
     </div>
 
     <div class="layui-form-item">
         <label class="layui-form-label">用户名</label>
         <div class="layui-input-block">
-            <input type="text" id="username" name="username" readonly class="layui-input">
+            <input type="text" id="username" name="username" class="layui-input">
         </div>
     </div>
 
@@ -103,7 +103,7 @@
         }
 
         $.ajax({
-            url: "/admin/edit",
+            url: "/admin/updateinfo",
             method: "POST",
             contentType: 'application/json',
             data: JSON.stringify(formData),

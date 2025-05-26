@@ -22,7 +22,7 @@ public interface TeacherService {
 
     boolean updateTeacher(Teacher teacher);
 
-    Teacher getInfo(int teacherID);
+    Result<Teacher> getInfo(int teacherID);
 
-    Teacher updateInfo(Teacher teacher);
+    Result<String> updateInfo(Teacher teacher);
 }

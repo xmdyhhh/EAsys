@@ -37,5 +37,5 @@ public interface TeacherMapper {
     Teacher getInfo(int teacherID);
 
     @Update("update teacher set username = #{username},password = #{password},teachername = #{teachername},sex = #{sex},birthYear = #{birthYear},degree = #{degree},title = #{title},grade = #{grade},collegeID = #{collegeID} where teacherID = #{teacherID}")
-    Teacher updateInfo(Teacher teacher);
+    int updateInfo(Teacher teacher);
 }

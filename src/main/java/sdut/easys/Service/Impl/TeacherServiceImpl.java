@@ -2,6 +2,7 @@ package sdut.easys.Service.Impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sdut.easys.Entity.Admin;
 import sdut.easys.Entity.Teacher;
 import sdut.easys.mapper.TeacherMapper;
 import sdut.easys.Service.TeacherService;
@@ -63,13 +64,22 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Teacher getInfo(int teacherID) {
-        return teacherMapper.getInfo(teacherID);
+    public Result<Teacher> getInfo(int teacherID) {
+        Teacher  teacher = teacherMapper.getInfo(teacherID);
+        if (teacher == null) {
+            return Result.error("教师不存在");
+        }
+        return Result.success(teacher);
     }
 
     @Override
-    public Teacher updateInfo(Teacher teacher) {
-        return teacherMapper.updateInfo(teacher);
+    public Result<String> updateInfo(Teacher teacher) {
+        int rows = teacherMapper.updateInfo(teacher);
+        if (rows > 0) {
+            return Result.success("更新成功");
+        } else {
+            return Result.error("更新失败");
+        }
     }
 
 }

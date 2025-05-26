@@ -82,4 +82,24 @@ public class AdminController {
         int count = teacherService.getTeacherCount();
         return Result.success(teachers, count);
     }
+
+    @GetMapping("/getinfo")
+    public Result<Admin> getInfo(HttpSession session) {
+        Admin admin = (Admin) session.getAttribute("admin");
+        if (admin == null) {
+            return Result.error("未登录");
+        }
+        return adminService.getInfo(admin.getAdminID());
+    }
+
+    // 更新管理员信息
+    @PostMapping("/updateinfo")
+    public Result<String> updateInfo(@RequestBody Admin admin, HttpSession session) {
+        Admin nowAdmin = (Admin) session.getAttribute("admin");
+        if (nowAdmin == null) {
+            return Result.error("未登录");
+        }
+        Result<String> result = adminService.updateInfo(admin);
+        return result;
+    }
 }
