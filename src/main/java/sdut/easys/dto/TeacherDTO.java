@@ -37,6 +37,8 @@ public class TeacherDTO {
     // 入职时间
     private String grade;
 
+    private Integer collegeID;
+
     // 所属学院
     private String collegename;
 }

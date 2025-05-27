@@ -10,6 +10,7 @@ import sdut.easys.Entity.Teacher;
 import sdut.easys.Service.CourseService;
 import sdut.easys.Service.TeacherService;
 import sdut.easys.Util.Result;
+import sdut.easys.dto.TeacherDTO;
 
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class TeacherController {
     }
 
     @GetMapping("/getinfo")
-    public Result<Teacher> getInfo(HttpSession session) {
+    public Result<TeacherDTO> getInfo(HttpSession session) {
         Teacher teacher = (Teacher) session.getAttribute("teacher");
         int teacherID = teacherService.getTeacherID(teacher.getUsername());
         if (teacher == null) {
@@ -73,7 +74,7 @@ public class TeacherController {
         Result<String> result = teacherService.updateInfo(teacher);
         if (result.getCode() == 1) {
             // 更新成功后重新查询最新信息
-            Teacher updatedTeacher = teacherService.getInfo(teacher.getTeacherID()).getData();
+            TeacherDTO updatedTeacher = teacherService.getInfo(teacher.getTeacherID()).getData();
             session.setAttribute("teacher", updatedTeacher); // 更新 session 中的对象
         }
         return result;
@@ -89,6 +90,15 @@ public class TeacherController {
             return Result.success(courses);
         }
         return null;
+    }
+
+    @GetMapping("/list")
+    public Result<List<Teacher>> getTeachers(
+            @RequestParam(required = false) String teachername,
+            @RequestParam(required = false) String username) {
+
+        List<Teacher> teachers = teacherService.getTeachers(teachername, username);
+        return Result.success(teachers);
     }
 
     @GetMapping("/getScoreByCourseid")
@@ -140,5 +150,4 @@ public class TeacherController {
         }
         return Result.success("删除成功");
     }
-
 }

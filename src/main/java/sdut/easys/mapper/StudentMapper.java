@@ -19,15 +19,6 @@ public interface StudentMapper {
     @Update("UPDATE student SET username = #{username},password = #{password},studentname=#{studentname},studentno=#{studentno}, sex = #{sex}, birthYear = #{birthYear}, email = #{email}, major = #{major}, grade = #{grade}, collegeID = #{collegeID} WHERE studentno = #{studentno}")
     int updateStudentInfo(Student student);
 
-    @Select("SELECT * FROM student WHERE studentno = #{studentno}")
-    Student getByStudentNo(String studentno);
-
-    @Select("SELECT * FROM student")
-    List<Student> getStudentList();
-
-    @Select("SELECT COUNT(*) FROM student")
-    int getStudentCount();
-
     @Insert("INSERT INTO student(username,password,studentname,studentno,sex,birthYear,email,major,grade,collegeID) VALUES(#{username},#{password},#{studentname},#{studentno},#{sex},#{birthYear},#{email},#{major},#{grade},#{collegeID})")
     int addStudent(Student student);
 
@@ -36,4 +27,6 @@ public interface StudentMapper {
 
     @Delete("DELETE FROM student WHERE studentID = #{studentID}")
     int deleteStudent(int studentID);
+
+    List<Student> getStudents(@Param("studentname") String studentname, @Param("studentno") String studentno);
 }

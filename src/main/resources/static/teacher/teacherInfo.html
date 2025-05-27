@@ -73,31 +73,35 @@
         </div>
     </div>
 
+    <!-- 学历 -->
     <div class="layui-form-item">
         <label class="layui-form-label">学历</label>
         <div class="layui-input-block">
-            <input type="text" id="degree" name="degree" class="layui-input">
+            <input type="text" id="degree" name="degree" readonly class="layui-input">
         </div>
     </div>
 
+    <!-- 职称 -->
     <div class="layui-form-item">
         <label class="layui-form-label">职称</label>
         <div class="layui-input-block">
-            <input type="text" id="title" name="title" class="layui-input">
+            <input type="text" id="title" name="title" readonly class="layui-input">
         </div>
     </div>
 
+    <!-- 入职时间 -->
     <div class="layui-form-item">
         <label class="layui-form-label">入职时间</label>
         <div class="layui-input-block">
-            <input type="text" id="grade" name="grade" class="layui-input">
+            <input type="text" id="grade" name="grade" readonly class="layui-input">
         </div>
     </div>
 
+    <!-- 学院名称 -->
     <div class="layui-form-item">
-        <label class="layui-form-label">学院编号</label>
+        <label class="layui-form-label">学院名称</label>
         <div class="layui-input-block">
-            <input type="text" id="collegeid" name="collegeID" class="layui-input">
+            <input type="text" id="collegename" name="collegename" readonly class="layui-input">
         </div>
     </div>
 
@@ -129,7 +133,7 @@
                     $("#degree").val(result.data.degree);
                     $("#title").val(result.data.title);
                     $("#grade").val(result.data.grade);
-                    $("#collegeid").val(result.data.collegeID);
+                    $("#collegename").val(result.data.collegename);
                     $("#password").val(""); // 密码不展示
                 } else {
                     layer.msg("获取教师信息失败：" + (result.message || "未知错误"), { icon: 2, time: 1800 });

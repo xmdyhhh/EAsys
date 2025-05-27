@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="sdut.easys.mapper.TeacherMapper">
+
+    <!-- 定义公共查询条件 -->
+    <sql id="teacherWhere">
+        <where>
+            <if test="teachername != null and teachername != ''">
+                AND teachername LIKE CONCAT('%', #{teachername}, '%')
+            </if>
+            <if test="username != null and username != ''">
+                AND username = #{username}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 普通查询（用于非分页场景） -->
+    <select id="selectTeacher" resultType="sdut.easys.Entity.Teacher">
+        SELECT *
+        FROM teacher
+        <include refid="teacherWhere"/>
+    </select>
+
+    <!-- 获取当前页的数据 -->
+    <select id="getTeacherList" resultType="sdut.easys.Entity.Teacher">
+        SELECT * FROM teacher
+        <include refid="teacherWhere"/>
+        ORDER BY teacherID ASC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 统计总数 -->
+    <select id="countTeachers" resultType="int">
+        SELECT COUNT(*) FROM teacher
+        <where>
+            <if test="teachername != null and teachername != ''">
+                AND teachername LIKE CONCAT('%', #{teachername}, '%')
+            </if>
+            <if test="username != null and username != ''">
+                AND username = #{username}
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,9 +1,6 @@
 package sdut.easys.mapper;
 
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import sdut.easys.Entity.CompletedCourse;
 import sdut.easys.Entity.Course;
 import sdut.easys.dto.CourseDTO;
@@ -27,9 +24,11 @@ public interface CourseMapper {
     @Insert("insert into course(coursename,credits,semester,maxenrollment,currentenrollment,startdate,enddate,dayofweek,starttime,endtime,teacherid,classroom) values(#{coursename},#{credits},#{semester},#{maxenrollment},#{currentenrollment},#{startdate},#{enddate},#{dayofweek},#{starttime},#{endtime},#{teacherid},#{classroom})")
     int addCourse(CourseDTO courseDTO);
 
-    @Update("update course set coursename=#{coursename},credits=#{credits},semester=#{semester},maxenrollment=#{maxenrollment},currentenrollment=#{currentenrollment},startdate=#{startdate},enddate=#{enddate},dayofweek=#{dayofweek},starttime=#{starttime},endtime=#{endtime},teacherid=#{teacherid}")
+    @Update("update course set coursename=#{coursename},credits=#{credits},semester=#{semester},maxenrollment=#{maxenrollment},currentenrollment=#{currentenrollment},startdate=#{startdate},enddate=#{enddate},dayofweek=#{dayofweek},starttime=#{starttime},endtime=#{endtime},teacherid=#{teacherid},classroom=#{classroom} where courseid=#{courseid}")
     int updateCourse(CourseDTO courseDTO);
 
     @Delete("delete from course where courseid= #{courseid}")
     int deleteCourse(int courseID);
+
+    List<Course> getCourses(@Param("coursename") String coursename);
 }

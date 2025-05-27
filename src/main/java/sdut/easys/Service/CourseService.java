@@ -20,4 +20,6 @@ public interface CourseService {
     boolean updateCourse(CourseDTO courseDTO);
 
     boolean deleteCourse(int courseID);
+
+    List<Course> getCourses(String coursename);
 }

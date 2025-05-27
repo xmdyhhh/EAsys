@@ -9,6 +9,8 @@ import sdut.easys.Entity.StudentInfo;
 import sdut.easys.Service.StudentService;
 import sdut.easys.Util.Result;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/student")
 @Slf4j
@@ -103,5 +105,13 @@ public class StudentController {
         }else {
             return Result.error("删除失败");
         }
+    }
+
+    @GetMapping("/list")
+    public Result<List<Student>> getStudents(
+            @RequestParam(required = false) String studentname,
+            @RequestParam(required = false) String studentno) {
+        List<Student> students = studentService.getStudents(studentname,studentno);
+        return Result.success(students);
     }
 }

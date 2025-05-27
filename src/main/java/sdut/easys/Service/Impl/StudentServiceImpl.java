@@ -69,16 +69,6 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> getStudentList() {
-        return studentMapper.getStudentList();
-    }
-
-    @Override
-    public int getStudentCount() {
-        return studentMapper.getStudentCount();
-    }
-
-    @Override
     public boolean addStudent(Student student) {
         return studentMapper.addStudent(student) > 0;
     }
@@ -91,5 +81,10 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public boolean deleteStudent(int studentID) {
         return studentMapper.deleteStudent(studentID) > 0;
+    }
+
+    @Override
+    public List<Student> getStudents(String studentname, String studentno) {
+        return studentMapper.getStudents(studentname,  studentno);
     }
 }

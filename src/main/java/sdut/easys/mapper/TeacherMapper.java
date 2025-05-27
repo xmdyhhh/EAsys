@@ -5,7 +5,6 @@ import sdut.easys.Entity.Teacher;
 
 import java.util.List;
 
-
 @Mapper
 public interface TeacherMapper {
 
@@ -16,13 +15,7 @@ public interface TeacherMapper {
     Integer getTeacherID(String username);
 
     @Update("update completedcourse set grade = #{grade} where courseID = #{courseId} AND studentno=#{studentno}")
-    int saveScore(Long courseId, Double grade,String studentno);
-
-    @Select("select * from teacher")
-    List<Teacher> getTeacherList();
-
-    @Select("select count(*) from teacher")
-    int getTeacherCount();
+    int saveScore(Long courseId, Double grade, String studentno);
 
     @Insert("insert into teacher(username,password,teachername,sex,birthYear,degree,title,grade,collegeID) values(#{username},#{password},#{teachername},#{sex},#{birthYear},#{degree},#{title},#{grade},#{collegeID})")
     int addTeacher(Teacher teacher);
@@ -38,4 +31,10 @@ public interface TeacherMapper {
 
     @Update("update teacher set username = #{username},password = #{password},teachername = #{teachername},sex = #{sex},birthYear = #{birthYear},degree = #{degree},title = #{title},grade = #{grade},collegeID = #{collegeID} where teacherID = #{teacherID}")
     int updateInfo(Teacher teacher);
+
+    List<Teacher> selectTeacher(@Param("teachername") String teachername,
+                                @Param("username") String username);
+
+    @Select("select collegeName from college where collegeID = #{collegeID}")
+    String getCollegeName(Integer collegeID);
 }

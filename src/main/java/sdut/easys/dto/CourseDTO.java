@@ -50,7 +50,4 @@ public class CourseDTO {
     // 教室
     private String classroom;
 
-    // 教师ID
-    private Integer teacherID;
-
 }

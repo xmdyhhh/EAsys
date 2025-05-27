@@ -62,27 +62,6 @@ public class AdminController {
         return null;
     }
 
-    @GetMapping("/courselist")
-    public Object getCourseList() {
-        List<Course> courses =courseService.getCourseList();
-        int count = courseService.getCourseCount();
-        return Result.success(courses, count);
-    }
-
-    @GetMapping("/studentlist")
-    public Object getStudentList() {
-        List<Student> students = studentService.getStudentList();
-        int count = studentService.getStudentCount();
-        return Result.success(students, count);
-    }
-
-    @GetMapping("/teacherlist")
-    public Object getTeacherList() {
-        List<Teacher> teachers = teacherService.getTeacherList();
-        int count = teacherService.getTeacherCount();
-        return Result.success(teachers, count);
-    }
-
     @GetMapping("/getinfo")
     public Result<Admin> getInfo(HttpSession session) {
         Admin admin = (Admin) session.getAttribute("admin");

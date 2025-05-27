@@ -1,9 +1,12 @@
 package sdut.easys.Service.Impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sdut.easys.Entity.Admin;
 import sdut.easys.Entity.Teacher;
+import sdut.easys.dto.TeacherDTO;
 import sdut.easys.mapper.TeacherMapper;
 import sdut.easys.Service.TeacherService;
 import sdut.easys.Util.Result;
@@ -38,14 +41,10 @@ public class TeacherServiceImpl implements TeacherService {
         return teacherMapper.saveScore(courseId, grade, studentNo) > 0;
     }
 
-    @Override
-    public List<Teacher> getTeacherList() {
-        return teacherMapper.getTeacherList();
-    }
 
     @Override
-    public int getTeacherCount() {
-        return teacherMapper.getTeacherCount();
+    public List<Teacher> getTeachers(String teachername, String username) {
+        return teacherMapper.selectTeacher(teachername, username); // 该方法已支持模糊查询和空条件
     }
 
     @Override
@@ -64,12 +63,25 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Result<Teacher> getInfo(int teacherID) {
+    public Result<TeacherDTO> getInfo(int teacherID) {
         Teacher  teacher = teacherMapper.getInfo(teacherID);
-        if (teacher == null) {
+        String collegeName = teacherMapper.getCollegeName(teacher.getCollegeID());
+        TeacherDTO teacherDTO = TeacherDTO.builder()
+                .teacherID(teacher.getTeacherID())
+                .username(teacher.getUsername())
+                .password(teacher.getPassword())
+                .teachername(teacher.getTeachername())
+                .sex(teacher.getSex())
+                .birthYear(teacher.getBirthYear())
+                .degree(teacher.getDegree())
+                .title(teacher.getTitle())
+                .grade(teacher.getGrade())
+                .collegeID(teacher.getCollegeID())
+                .collegename(collegeName).build();
+        if (teacherDTO == null) {
             return Result.error("教师不存在");
         }
-        return Result.success(teacher);
+        return Result.success(teacherDTO);
     }
 
     @Override
@@ -81,5 +93,4 @@ public class TeacherServiceImpl implements TeacherService {
             return Result.error("更新失败");
         }
     }
-
 }

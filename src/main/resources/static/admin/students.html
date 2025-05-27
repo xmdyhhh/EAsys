@@ -26,8 +26,6 @@
     </style>
 </head>
 <body>
-
-<!-- 查询区域 -->
 <div class="layui-form" style="margin: 15px;">
     <div class="layui-inline">
         <input type="text" id="studentname" placeholder="请输入姓名" class="layui-input">
@@ -38,17 +36,11 @@
     <button class="layui-btn" lay-filter="search">查询</button>
     <button class="layui-btn layui-btn-normal" lay-filter="add">新增学生</button>
 </div>
-
-<!-- 表格容器 -->
 <table class="layui-table" id="studentTable" lay-filter="studentTable"></table>
-
-<!-- 行内工具栏模板 -->
 <script type="text/html" id="toolBar">
     <button class="layui-btn layui-btn-xs" lay-event="edit">编辑</button>
     <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</button>
 </script>
-
-<!-- Layui 引入 -->
 <script src="/layui/layui.all.js"></script>
 <script>
     layui.use(['table', 'jquery', 'layer', 'form'], function () {
@@ -57,13 +49,13 @@
         const layer = layui.layer;
         const form = layui.form;
 
-        // 初始化表格
+        // 渲染表格函数（不带分页）
         const renderTable = function () {
             table.render({
                 elem: '#studentTable',
-                url: '/admin/studentlist',
-                page: true,
-                limit: 10,
+                url: '/student/list',
+                page: false,   // 关闭分页
+                limit: 10000,  // 设置一个足够大的 limit 值以显示全部数据
                 cols: [[
                     { field: 'studentID', title: '学生ID' },
                     { field: 'username', title: '账号' },
@@ -87,17 +79,16 @@
             });
         };
 
-        // 页面加载时初始化表格
+        // 初始化加载表格
         renderTable();
 
-        // 查询按钮点击事件
+        // 查询按钮点击事件（不再重置分页）
         $('.layui-btn[lay-filter="search"]').on('click', function () {
             table.reload('studentTable', {
                 where: {
                     studentname: $('#studentname').val(),
                     studentno: $('#studentno').val()
-                },
-                page: { curr: 1 }
+                }
             });
         });
 
@@ -106,20 +97,16 @@
             openForm();
         });
 
-        // 打开新增或编辑窗口
+        // 弹出新增/编辑表单
         function openForm(data) {
             const isEdit = !!data; // 是否为编辑模式
-
             const index = layer.open({
                 type: 1,
                 title: isEdit ? '编辑学生' : '新增学生',
                 area: ['600px', '520px'],
                 content: `
                   <form class="layui-form" style="padding: 20px;">
-                    <!-- studentID 隐藏域 -->
                     ${isEdit ? `<input type="hidden" name="studentID" value="${data?.studentID || ''}">` : ''}
-
-                    <!-- 账号 -->
                     <div class="layui-form-item">
                       <label class="layui-form-label">账号</label>
                       <div class="layui-input-block">
@@ -127,8 +114,6 @@
                                value="${data?.username || ''}" class="layui-input">
                       </div>
                     </div>
-
-                    <!-- 密码 -->
                     <div class="layui-form-item">
                       <label class="layui-form-label">密码</label>
                       <div class="layui-input-block">
@@ -136,8 +121,6 @@
                                value="${data?.password || ''}" class="layui-input">
                       </div>
                     </div>
-
-                    <!-- 姓名 -->
                     <div class="layui-form-item">
                       <label class="layui-form-label">姓名</label>
                       <div class="layui-input-block">
@@ -145,8 +128,6 @@
                                value="${data?.studentname || ''}" class="layui-input">
                       </div>
                     </div>
-
-                    <!-- 学号 -->
                     <div class="layui-form-item">
                       <label class="layui-form-label">学号</label>
                       <div class="layui-input-block">
@@ -154,8 +135,6 @@
                                value="${data?.studentno || ''}" class="layui-input">
                       </div>
                     </div>
-
-                    <!-- 性别 -->
                     <div class="layui-form-item">
                       <label class="layui-form-label">性别</label>
                       <div class="layui-input-block">
@@ -166,8 +145,6 @@
                         </select>
                       </div>
                     </div>
-
-                    <!-- 出生年份 -->
                     <div class="layui-form-item">
                       <label class="layui-form-label">出生年份</label>
                       <div class="layui-input-block">
@@ -175,8 +152,6 @@
                                value="${data?.birthYear || ''}" class="layui-input">
                       </div>
                     </div>
-
-                    <!-- 邮箱 -->
                     <div class="layui-form-item">
                       <label class="layui-form-label">邮箱</label>
                       <div class="layui-input-block">
@@ -184,8 +159,6 @@
                                value="${data?.email || ''}" class="layui-input">
                       </div>
                     </div>
-
-                    <!-- 专业 -->
                     <div class="layui-form-item">
                       <label class="layui-form-label">专业</label>
                       <div class="layui-input-block">
@@ -193,8 +166,6 @@
                                value="${data?.major || ''}" class="layui-input">
                       </div>
                     </div>
-
-                    <!-- 年级 -->
                     <div class="layui-form-item">
                       <label class="layui-form-label">年级</label>
                       <div class="layui-input-block">
@@ -207,8 +178,6 @@
                         </select>
                       </div>
                     </div>
-
-                    <!-- 学院ID -->
                     <div class="layui-form-item">
                       <label class="layui-form-label">学院ID</label>
                       <div class="layui-input-block">
@@ -216,8 +185,6 @@
                                value="${data?.collegeID || ''}" class="layui-input">
                       </div>
                     </div>
-
-                    <!-- 提交按钮 -->
                     <div class="layui-form-item">
                       <div class="layui-input-block">
                         <button class="layui-btn" lay-submit lay-filter="submitForm">提交</button>
@@ -227,15 +194,12 @@
                   </form>
                 `,
                 success: function (layero, idx) {
-                    form.render();
-
-                    // 表单提交事件
+                    form.render(); // 重新渲染表单元素
                     form.on('submit(submitForm)', function (obj) {
                         const formData = obj.field;
-
                         $.ajax({
                             url: isEdit ? '/student/update' : '/student/add',
-                            method: 'POST',
+                            method: isEdit ? 'PUT' : 'POST',
                             contentType: 'application/json',
                             data: JSON.stringify(formData),
                             success: function (res) {
@@ -248,27 +212,33 @@
                                 }
                             }
                         });
-
                         return false; // 阻止默认提交
                     });
                 }
             });
         }
 
-        // 行内操作监听
+        // 行操作事件（编辑、删除）
         table.on('tool(studentTable)', function (obj) {
             const event = obj.event;
             const data = obj.data;
 
             if (event === 'del') {
                 layer.confirm("确认删除该学生？", function (index) {
-                    $.post('/student/delete', { studentID: data.studentID }, function (res) {
-                        if (res.code === 1) {
-                            layer.close(index);
-                            renderTable();
-                            layer.msg("删除成功", { icon: 1 });
-                        } else {
-                            layer.msg("删除失败：" + res.message, { icon: 2 });
+                    $.ajax({
+                        url: '/student/delete?studentID=' + data.studentID,
+                        method: 'DELETE',
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layer.close(index);
+                                renderTable();
+                                layer.msg("删除成功", { icon: 1 });
+                            } else {
+                                layer.msg("删除失败：" + res.message, { icon: 2 });
+                            }
+                        },
+                        error: function () {
+                            layer.msg("请求失败，请重试", { icon: 5 });
                         }
                     });
                 });
@@ -278,6 +248,5 @@
         });
     });
 </script>
-
 </body>
 </html>

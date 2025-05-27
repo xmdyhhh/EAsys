@@ -13,13 +13,11 @@ public interface StudentService {
 
     Result<Student> updateInfo(StudentInfo studentInfo, String collegename);
 
-    List<Student> getStudentList();
-
-    int getStudentCount();
-
     boolean addStudent(Student student);
 
     boolean updateStudent(Student student);
 
     boolean deleteStudent(int studentID);
+
+    List<Student> getStudents(String studentname, String studentno);
 }

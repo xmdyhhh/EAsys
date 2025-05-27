@@ -3,6 +3,7 @@ package sdut.easys.Controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import sdut.easys.Entity.Course;
 import sdut.easys.Service.CourseService;
 import sdut.easys.Util.Result;
 import sdut.easys.dto.CourseDTO;
@@ -33,5 +34,13 @@ public class CourseController {
     public Result<String> deleteCourse(@RequestParam("courseID") int courseID){
         boolean success = courseService.deleteCourse(courseID);
         return success ? Result.success("删除成功") : Result.error("删除失败");
+    }
+
+    @GetMapping("/list")
+    public Result<List<Course>> getCourses(
+            @RequestParam(required = false) String coursename
+    ){
+        List<Course> courses = courseService.getCourses(coursename);
+        return Result.success(courses);
     }
 }

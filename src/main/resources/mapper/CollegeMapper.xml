@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="sdut.easys.mapper.CollegeMapper">
+
+    <!-- 定义公共查询条件 -->
+    <sql id="collegeWhere">
+        <where>
+            <if test="collegeName != null and collegeName != ''">
+                collegeName LIKE CONCAT('%', #{collegeName}, '%')
+            </if>
+        </where>
+    </sql>
+
+    <!-- 普通查询（用于非分页场景） -->
+    <select id="getColleges" resultType="sdut.easys.Entity.College">
+        SELECT *
+        FROM college
+        <include refid="collegeWhere"/>
+        ORDER BY collegeId ASC
+    </select>
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="sdut.easys.mapper.CourseMapper">
+
+    <!-- 定义公共查询条件 -->
+    <sql id="CourseWhere">
+        <where>
+            <if test="coursename != null and coursename != ''">
+                AND coursename LIKE CONCAT('%', #{coursename}, '%')
+            </if>
+        </where>
+    </sql>
+
+    <!-- 查询所有符合条件的学生 -->
+    <select id="getCourses" resultType="sdut.easys.Entity.Course">
+        SELECT *
+        FROM course
+        <include refid="CourseWhere"/>
+    </select>
+
+</mapper>

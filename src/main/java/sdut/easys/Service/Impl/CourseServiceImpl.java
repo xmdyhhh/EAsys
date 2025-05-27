@@ -50,4 +50,9 @@ public class CourseServiceImpl implements CourseService {
     public boolean deleteCourse(int courseID) {
         return courseMapper.deleteCourse(courseID) > 0;
     }
+
+    @Override
+    public List<Course> getCourses(String courseName) {
+        return courseMapper.getCourses(courseName);
+    }
 }

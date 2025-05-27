@@ -22,9 +22,6 @@
   <div class="layui-inline">
     <input type="text" id="coursename" placeholder="请输入课程名称" class="layui-input">
   </div>
-  <div class="layui-inline">
-    <input type="text" id="semester" placeholder="请输入学期" class="layui-input">
-  </div>
   <button class="layui-btn" lay-options="" lay-filter="search">查询</button>
   <button class="layui-btn layui-btn-normal" lay-options="" lay-filter="add">新增课程</button>
 </div>
@@ -32,15 +29,24 @@
 <!-- 表格容器 -->
 <table class="layui-table" id="courseTable" lay-filter="courseTable"></table>
 
-<!-- 表格行内工具栏模板 -->
+<!-- 行内工具栏模板 -->
 <script type="text/html" id="toolBar">
   <button class="layui-btn layui-btn-xs" lay-event="edit">编辑</button>
   <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</button>
 </script>
 
-<!-- Layui 引入 -->
+<!-- Layui 脚本 -->
 <script src="/layui/layui.all.js"></script>
 <script>
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   layui.use(['table', 'jquery', 'layer', 'form'], function () {
     const table = layui.table;
     const $ = layui.jquery;
@@ -50,8 +56,7 @@
     let reloadTable = function () {
       table.reload('courseTable', {
         where: {
-          coursename: $('#coursename').val(),
-          semester: $('#semester').val()
+          coursename: $('#coursename').val().trim()
         },
         page: { curr: 1 }
       });
@@ -60,7 +65,7 @@
     // 初始化表格
     table.render({
       elem: '#courseTable',
-      url: '/admin/courselist',
+      url: '/course/list',
       page: true,
       limit: 10,
       cols: [[
@@ -93,12 +98,12 @@
       openForm();
     });
 
-    // 打开新增或编辑表单
+    // 打开新增或编辑表单（略去部分代码以保持简洁）
     function openForm(data) {
       const index = layer.open({
         type: 1,
         title: data ? '编辑课程' : '新增课程',
-        area: ['600px', '450px'],
+        area: ['600px', '550px'],
         content: `
           <form class="layui-form" style="padding: 20px;">
             <input type="hidden" name="courseid" value="${data?.courseid || ''}">
@@ -136,6 +141,22 @@
             </div>
 
             <div class="layui-form-item">
+              <label class="layui-form-label">最大选课人数</label>
+              <div class="layui-input-block">
+                <input type="text" name="maxenrollment" required lay-verify="required"
+                       value="${data?.maxenrollment || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">当前选课人数</label>
+              <div class="layui-input-block">
+                <input type="text" name="currentenrollment" required lay-verify="required"
+                       value="${data?.currentenrollment || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
               <label class="layui-form-label">星期几</label>
               <div class="layui-input-block">
                 <input type="text" name="dayofweek" required lay-verify="required"
@@ -160,6 +181,30 @@
             </div>
 
             <div class="layui-form-item">
+              <label class="layui-form-label">开始日期</label>
+              <div class="layui-input-block">
+                <input type="date" name="startdate" required lay-verify="required"
+                       value="${data?.startdate ? formatDate(data.startdate) : ''}" class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">结束日期</label>
+              <div class="layui-input-block">
+                <input type="date" name="enddate" required lay-verify="required"
+                       value="${data?.enddate ? formatDate(data.enddate) : ''}" class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">教师ID</label>
+              <div class="layui-input-block">
+                <input type="text" name="teacherid" required lay-verify="required"
+                       value="${data?.teacherid || ''}" class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
               <div class="layui-input-block">
                 <button class="layui-btn" lay-submit lay-filter="submitForm">提交</button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -167,26 +212,28 @@
             </div>
           </form>
         `,
-        success: function (layero, index) {
+        success: function (layero, idx) {
           form.render();
 
           // 提交事件绑定
           form.on('submit(submitForm)', function (obj) {
             const formData = obj.field;
 
-            // 这里模拟 Ajax 提交
             $.ajax({
               url: data ? '/course/update' : '/course/add',
-              method: 'POST',
+              method: data ? 'PUT' : 'POST',
               contentType: 'application/json',
               data: JSON.stringify(formData),
               success: function (res) {
                 if (res.code === 1) {
-                  layer.close(index);
+                  layer.close(idx);
                   reloadTable();
                 } else {
                   layer.msg('保存失败：' + res.message, { icon: 2 });
                 }
+              },
+              error: function () {
+                layer.msg('请求失败，请重试', { icon: 5 });
               }
             });
 
@@ -203,13 +250,20 @@
 
       if (event === 'del') {
         layer.confirm('确定要删除该课程？', function (index) {
-          // 发送删除请求
-          $.post('/course/delete', { courseid: data.courseid }, function (res) {
-            if (res.code === 1) {
-              layer.close(index);
-              reloadTable();
-            } else {
-              layer.msg('删除失败：' + res.message, { icon: 2 });
+          $.ajax({
+            url: '/course/delete',
+            type: 'DELETE',
+            data: { courseID: data.courseid },
+            success: function (res) {
+              if (res.code === 1) {
+                layer.close(index);
+                reloadTable();
+              } else {
+                layer.msg('删除失败：' + res.message, { icon: 2 });
+              }
+            },
+            error: function () {
+              layer.msg('请求失败，请重试', { icon: 5 });
             }
           });
         });

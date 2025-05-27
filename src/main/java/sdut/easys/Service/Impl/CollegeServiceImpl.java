@@ -23,4 +23,24 @@ public class CollegeServiceImpl implements CollegeService {
     public int getAllCollegesCount() {
         return collegeMapper.getAllCollegesCount();
     }
+
+    @Override
+    public List<College> getColleges(String collegename) {
+        return collegeMapper.getColleges(collegename);
+    }
+
+    @Override
+    public boolean addCollege(College college) {
+        return collegeMapper.addCollege(college) > 0;
+    }
+
+    @Override
+    public boolean updateCollege(College college) {
+        return collegeMapper.updateCollege(college) > 0;
+    }
+
+    @Override
+    public boolean deleteCollege(int collegeID) {
+        return collegeMapper.deleteCollege(collegeID) > 0;
+    }
 }

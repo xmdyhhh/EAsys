@@ -57,18 +57,18 @@
     const layer = layui.layer;
     const form = layui.form;
 
-    // 初始化表格
-    const renderTable = function () {
+    // 初始化表格或重新加载表格
+    const renderTable = function (url = '/teacher/list', where = {}) {
       table.render({
         elem: '#teacherTable',
-        url: '/admin/teacherlist',
-        page: true,
-        limit: 10,
+        id: 'teacherTable',
+        url: url,
+        where: where,
         cols: [[
           { field: 'teacherID', title: '教师ID' },
           { field: 'teachername', title: '姓名' },
           { field: 'username', title: '工号' },
-          { field: 'password', title: '密码' }, <!-- 新增密码列 -->
+          { field: 'password', title: '密码' },
           { field: 'sex', title: '性别' },
           { field: 'birthYear', title: '出生年份' },
           { field: 'degree', title: '学历' },
@@ -80,23 +80,22 @@
           statusName: 'code',
           statusCode: 1,
           msgName: 'message',
-          countName: 'count',
           dataName: 'data'
         }
       });
     };
 
-    // 页面加载时初始化表格
+    // 首次加载默认表格
     renderTable();
 
     // 查询按钮点击事件
     $('.layui-btn[lay-filter="search"]').on('click', function () {
-      table.reload('teacherTable', {
-        where: {
-          teachername: $('#teachername').val(),
-          username: $('#username').val()
-        },
-        page: { curr: 1 }
+      const teachername = $('#teachername').val().trim();
+      const username = $('#username').val().trim();
+
+      renderTable('/teacher/list', {
+        teachername: teachername,
+        username: username
       });
     });
 
@@ -114,114 +113,91 @@
         title: isEdit ? '编辑教师' : '新增教师',
         area: ['600px', '520px'],
         content: `
-          <form class="layui-form" style="padding: 20px;">
-            <!-- teacherID 隐藏域 -->
-            ${isEdit ? `<input type="hidden" name="teacherID" value="${data?.teacherID || ''}">` : ''}
-
-            <!-- 姓名 -->
-            <div class="layui-form-item">
-              <label class="layui-form-label">姓名</label>
-              <div class="layui-input-block">
-                <input type="text" name="teachername" required lay-verify="required"
-                       value="${data?.teachername || ''}" class="layui-input">
-              </div>
-            </div>
-
-            <!-- 工号 -->
-            <div class="layui-form-item">
-              <label class="layui-form-label">工号</label>
-              <div class="layui-input-block">
-                <input type="text" name="username" required lay-verify="required"
-                       value="${data?.username || ''}" class="layui-input">
-              </div>
-            </div>
-
-            <!-- 密码 -->
-            <div class="layui-form-item">
-              <label class="layui-form-label">密码</label>
-              <div class="layui-input-block">
-                <input type="password" name="password" required lay-verify="required"
-                       value="${data?.password || ''}" class="layui-input">
-              </div>
-            </div>
-
-            <!-- 性别 -->
-            <div class="layui-form-item">
-              <label class="layui-form-label">性别</label>
-              <div class="layui-input-block">
-                <select name="sex" lay-verify="required">
-                  <option value="">请选择性别</option>
-                  <option value="男" ${data?.sex === '男' ? 'selected' : ''}>男</option>
-                  <option value="女" ${data?.sex === '女' ? 'selected' : ''}>女</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- 出生年份 -->
-            <div class="layui-form-item">
-              <label class="layui-form-label">出生年份</label>
-              <div class="layui-input-block">
-                <input type="text" name="birthYear" required lay-verify="required"
-                       value="${data?.birthYear || ''}" class="layui-input">
-              </div>
-            </div>
-
-            <!-- 学历 -->
-            <div class="layui-form-item">
-              <label class="layui-form-label">学历</label>
-              <div class="layui-input-block">
-                <input type="text" name="degree" required lay-verify="required"
-                       value="${data?.degree || ''}" class="layui-input">
-              </div>
-            </div>
-
-            <!-- 职称 -->
-            <div class="layui-form-item">
-              <label class="layui-form-label">职称</label>
-              <div class="layui-input-block">
-                <input type="text" name="title" required lay-verify="required"
-                       value="${data?.title || ''}" class="layui-input">
-              </div>
-            </div>
-
-            <!-- 入职时间 -->
-            <div class="layui-form-item">
-              <label class="layui-form-label">入职时间</label>
-              <div class="layui-input-block">
-                <input type="text" name="grade" required lay-verify="required"
-                       value="${data?.grade || ''}" class="layui-input">
-              </div>
-            </div>
-
-            <!-- 所属学院ID -->
-            <div class="layui-form-item">
-              <label class="layui-form-label">所属学院ID</label>
-              <div class="layui-input-block">
-                <input type="text" name="collegeID" required lay-verify="required"
-                       value="${data?.collegeId || ''}" class="layui-input">
-              </div>
-            </div>
-
-
-            <!-- 提交按钮 -->
-            <div class="layui-form-item">
-              <div class="layui-input-block">
-                <button class="layui-btn" lay-submit lay-filter="submitForm">提交</button>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-              </div>
-            </div>
-          </form>
-        `,
+                  <form class="layui-form" style="padding: 20px;">
+                    ${isEdit ? `<input type="hidden" name="teacherID" value="${data?.teacherID || ''}">` : ''}
+                    <div class="layui-form-item">
+                      <label class="layui-form-label">姓名</label>
+                      <div class="layui-input-block">
+                        <input type="text" name="teachername" required lay-verify="required"
+                               value="${data?.teachername || ''}" class="layui-input">
+                      </div>
+                    </div>
+                    <div class="layui-form-item">
+                      <label class="layui-form-label">工号</label>
+                      <div class="layui-input-block">
+                        <input type="text" name="username" required lay-verify="required"
+                               value="${data?.username || ''}" class="layui-input">
+                      </div>
+                    </div>
+                    <div class="layui-form-item">
+                      <label class="layui-form-label">密码</label>
+                      <div class="layui-input-block">
+                        <input type="password" name="password" required lay-verify="required"
+                               value="${data?.password || ''}" class="layui-input">
+                      </div>
+                    </div>
+                    <div class="layui-form-item">
+                      <label class="layui-form-label">性别</label>
+                      <div class="layui-input-block">
+                        <select name="sex" lay-verify="required">
+                          <option value="">请选择性别</option>
+                          <option value="男" ${data?.sex === '男' ? 'selected' : ''}>男</option>
+                          <option value="女" ${data?.sex === '女' ? 'selected' : ''}>女</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="layui-form-item">
+                      <label class="layui-form-label">出生年份</label>
+                      <div class="layui-input-block">
+                        <input type="text" name="birthYear" required lay-verify="required"
+                               value="${data?.birthYear || ''}" class="layui-input">
+                      </div>
+                    </div>
+                    <div class="layui-form-item">
+                      <label class="layui-form-label">学历</label>
+                      <div class="layui-input-block">
+                        <input type="text" name="degree" required lay-verify="required"
+                               value="${data?.degree || ''}" class="layui-input">
+                      </div>
+                    </div>
+                    <div class="layui-form-item">
+                      <label class="layui-form-label">职称</label>
+                      <div class="layui-input-block">
+                        <input type="text" name="title" required lay-verify="required"
+                               value="${data?.title || ''}" class="layui-input">
+                      </div>
+                    </div>
+                    <div class="layui-form-item">
+                      <label class="layui-form-label">入职时间</label>
+                      <div class="layui-input-block">
+                        <input type="text" name="grade" required lay-verify="required"
+                               value="${data?.grade || ''}" class="layui-input">
+                      </div>
+                    </div>
+                    <div class="layui-form-item">
+                      <label class="layui-form-label">所属学院ID</label>
+                      <div class="layui-input-block">
+                        <input type="text" name="collegeID" required lay-verify="required"
+                               value="${data?.collegeID || ''}" class="layui-input">
+                      </div>
+                    </div>
+                    <div class="layui-form-item">
+                      <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="submitForm">提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                      </div>
+                    </div>
+                  </form>
+                `,
         success: function (layero, idx) {
-          form.render();
+          form.render(); // 重新渲染表单元素
 
-          // 提交表单
+          // 表单提交事件
           form.on('submit(submitForm)', function (obj) {
             const formData = obj.field;
-
             $.ajax({
               url: isEdit ? '/teacher/update' : '/teacher/add',
-              method: 'POST',
+              method: isEdit ? 'PUT' : 'POST',
               contentType: 'application/json',
               data: JSON.stringify(formData),
               success: function (res) {
@@ -234,27 +210,34 @@
                 }
               }
             });
-
             return false; // 阻止默认提交
           });
         }
       });
     }
 
-    // 行内操作监听
+    // 行内操作监听（删除、编辑）
     table.on('tool(teacherTable)', function (obj) {
       const event = obj.event;
       const data = obj.data;
 
       if (event === 'del') {
         layer.confirm("确认删除该教师？", function (index) {
-          $.post('/teacher/delete', { teacherID: data.teacherID }, function (res) {
-            if (res.code === 1) {
-              layer.close(index);
-              renderTable();
-              layer.msg("删除成功", { icon: 1 });
-            } else {
-              layer.msg("删除失败：" + res.message, { icon: 2 });
+          $.ajax({
+            url: '/teacher/delete',
+            method: 'DELETE',
+            data: { teacherID: data.teacherID },
+            success: function (res) {
+              if (res.code === 1) {
+                layer.close(index);
+                renderTable();
+                layer.msg("删除成功", { icon: 1 });
+              } else {
+                layer.msg("删除失败：" + res.message, { icon: 2 });
+              }
+            },
+            error: function () {
+              layer.msg("请求失败，请重试", { icon: 5 });
             }
           });
         });
@@ -264,6 +247,5 @@
     });
   });
 </script>
-
 </body>
 </html>
