@@ -23,6 +23,15 @@
         <include refid="teacherWhere"/>
     </select>
 
+    <update id="updateInfo" parameterType="Teacher">
+        UPDATE teacher
+        SET username=#{username}, password=#{password}, teachername=#{teachername},
+            sex=#{sex}, birthYear=#{birthYear}, degree=#{degree}, title=#{title},
+            grade=STR_TO_DATE(#{grade}, '%Y-%m-%d'), -- 将字符串转换为日期
+            collegeID=#{collegeID}
+        WHERE teacherID=#{teacherID}
+    </update>
+
     <!-- 获取当前页的数据 -->
     <select id="getTeacherList" resultType="sdut.easys.Entity.Teacher">
         SELECT * FROM teacher

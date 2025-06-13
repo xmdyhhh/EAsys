@@ -2,6 +2,7 @@ package sdut.easys.Service;
 
 import com.github.pagehelper.PageInfo;
 import sdut.easys.Entity.Teacher;
+import sdut.easys.Entity.TeacherInfo;
 import sdut.easys.Util.Result;
 import sdut.easys.dto.TeacherDTO;
 
@@ -20,9 +21,9 @@ public interface TeacherService {
 
     boolean updateTeacher(Teacher teacher);
 
-    Result<TeacherDTO> getInfo(int teacherID);
+    TeacherInfo getInfo(int teacherID);
 
-    Result<String> updateInfo(Teacher teacher);
+    Result<Teacher> updateInfo(TeacherInfo teacherInfo,  String collegename);
 
     List<Teacher> getTeachers(String teachername, String username);
 }

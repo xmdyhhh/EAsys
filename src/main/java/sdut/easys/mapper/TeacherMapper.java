@@ -2,6 +2,7 @@ package sdut.easys.mapper;
 
 import org.apache.ibatis.annotations.*;
 import sdut.easys.Entity.Teacher;
+import sdut.easys.Entity.TeacherInfo;
 
 import java.util.List;
 
@@ -26,10 +27,11 @@ public interface TeacherMapper {
     @Update("update teacher set username = #{username},password = #{password},teachername = #{teachername},sex = #{sex},birthYear = #{birthYear},degree = #{degree},title = #{title},grade = #{grade},collegeID = #{collegeID} where teacherID = #{teacherID}")
     int updateTeacher(Teacher teacher);
 
-    @Select("select * from teacher where teacherID = #{teacherID}")
-    Teacher getInfo(int teacherID);
+    @Select("SELECT t.*, c.collegename FROM teacher t " +
+            "LEFT JOIN college c ON t.collegeID = c.collegeid " +
+            "WHERE t.teacherID = #{teacherID}")
+    TeacherInfo getInfo(int teacherID);
 
-    @Update("update teacher set username = #{username},password = #{password},teachername = #{teachername},sex = #{sex},birthYear = #{birthYear},degree = #{degree},title = #{title},grade = #{grade},collegeID = #{collegeID} where teacherID = #{teacherID}")
     int updateInfo(Teacher teacher);
 
     List<Teacher> selectTeacher(@Param("teachername") String teachername,
@@ -37,4 +39,7 @@ public interface TeacherMapper {
 
     @Select("select collegeName from college where collegeID = #{collegeID}")
     String getCollegeName(Integer collegeID);
+
+    @Select("select collegeID from college where collegeName = #{collegename}")
+    int getCollegeIDByName(String collegename);
 }

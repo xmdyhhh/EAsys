@@ -1,18 +1,18 @@
 package sdut.easys.Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import sdut.easys.Entity.CompletedCourse;
-import sdut.easys.Entity.Course;
-import sdut.easys.Entity.Teacher;
+import sdut.easys.Entity.*;
 import sdut.easys.Service.CourseService;
 import sdut.easys.Service.TeacherService;
 import sdut.easys.Util.Result;
 import sdut.easys.dto.TeacherDTO;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/teacher")
@@ -55,29 +55,36 @@ public class TeacherController {
     }
 
     @GetMapping("/getinfo")
-    public Result<TeacherDTO> getInfo(HttpSession session) {
+    public TeacherInfo getInfo(HttpSession session) {
         Teacher teacher = (Teacher) session.getAttribute("teacher");
-        int teacherID = teacherService.getTeacherID(teacher.getUsername());
-        if (teacher == null) {
-            return Result.error("未登录");
+        int teacherID = teacher.getTeacherID();
+        if (teacher != null){
+            return teacherService.getInfo(teacherID);
         }
-        return teacherService.getInfo(teacherID);
+        return null;
     }
 
     @PostMapping("/updateinfo")
-    public Result<String> updateInfo(@RequestBody Teacher teacher, HttpSession session) {
+    public Result<Teacher> updateInfo(@RequestBody Map<String, Object> payload, HttpSession session) {
+        System.out.println("原始请求体: " + payload);
+        System.out.println("原始请求体：" + payload);
+
+        ObjectMapper mapper = new ObjectMapper();
+        TeacherInfo teacherInfo = mapper.convertValue(payload, TeacherInfo.class);
+
+        System.out.println("转换后的 teacherID：" + teacherInfo.getTeacherID());
         Teacher nowTeacher = (Teacher) session.getAttribute("teacher");
         if (nowTeacher == null) {
             return Result.error("未登录");
         }
-        // 执行更新
-        Result<String> result = teacherService.updateInfo(teacher);
-        if (result.getCode() == 1) {
-            // 更新成功后重新查询最新信息
-            TeacherDTO updatedTeacher = teacherService.getInfo(teacher.getTeacherID()).getData();
-            session.setAttribute("teacher", updatedTeacher); // 更新 session 中的对象
+
+        Teacher newTeacher = teacherService.updateInfo(teacherInfo, teacherInfo.getCollegename()).getData();
+        if (newTeacher == null) {
+            return Result.error("更新失败");
         }
-        return result;
+
+        session.setAttribute("teacher", newTeacher);
+        return Result.success(newTeacher);
     }
 
     @GetMapping("/getTeacherCourse")

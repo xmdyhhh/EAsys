@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sdut.easys.Entity.Admin;
 import sdut.easys.Entity.Teacher;
+import sdut.easys.Entity.TeacherInfo;
 import sdut.easys.dto.TeacherDTO;
+import sdut.easys.mapper.CollegeMapper;
 import sdut.easys.mapper.TeacherMapper;
 import sdut.easys.Service.TeacherService;
 import sdut.easys.Util.Result;
@@ -18,6 +20,8 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Autowired
     private TeacherMapper teacherMapper;
+    @Autowired
+    private CollegeMapper collegeMapper;
 
     @Override
     public Result<Teacher> login(String username, String password) {
@@ -63,32 +67,27 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Result<TeacherDTO> getInfo(int teacherID) {
-        Teacher  teacher = teacherMapper.getInfo(teacherID);
-        String collegeName = teacherMapper.getCollegeName(teacher.getCollegeID());
-        TeacherDTO teacherDTO = TeacherDTO.builder()
-                .teacherID(teacher.getTeacherID())
-                .username(teacher.getUsername())
-                .password(teacher.getPassword())
-                .teachername(teacher.getTeachername())
-                .sex(teacher.getSex())
-                .birthYear(teacher.getBirthYear())
-                .degree(teacher.getDegree())
-                .title(teacher.getTitle())
-                .grade(teacher.getGrade())
-                .collegeID(teacher.getCollegeID())
-                .collegename(collegeName).build();
-        if (teacherDTO == null) {
-            return Result.error("教师不存在");
-        }
-        return Result.success(teacherDTO);
+    public TeacherInfo getInfo(int teacherID) {
+        return teacherMapper.getInfo(teacherID);
     }
 
     @Override
-    public Result<String> updateInfo(Teacher teacher) {
+    public Result<Teacher> updateInfo(TeacherInfo teacherInfo,  String collegename) {
+        int collegeID = collegeMapper.getCollegeIDByName(collegename);
+        Teacher teacher = new Teacher();
+        teacher.setTeacherID(teacherInfo.getTeacherID());
+        teacher.setUsername(teacherInfo.getUsername());
+        teacher.setPassword(teacherInfo.getPassword());
+        teacher.setTeachername(teacherInfo.getTeachername());
+        teacher.setSex(teacherInfo.getSex());
+        teacher.setBirthYear(teacherInfo.getBirthYear());
+        teacher.setDegree(teacherInfo.getDegree());
+        teacher.setTitle(teacherInfo.getTitle());
+        teacher.setGrade(teacherInfo.getGrade());
+        teacher.setCollegeID(collegeID);
         int rows = teacherMapper.updateInfo(teacher);
         if (rows > 0) {
-            return Result.success("更新成功");
+            return Result.success(teacher);
         } else {
             return Result.error("更新失败");
         }
