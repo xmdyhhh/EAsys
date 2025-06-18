@@ -43,6 +43,17 @@
 </script>
 <script src="/layui/layui.all.js"></script>
 <script>
+    // 全局日期格式化函数
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString; // 非法日期返回原值
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
     layui.use(['table', 'jquery', 'layer', 'form'], function () {
         const table = layui.table;
         const $ = layui.jquery;
@@ -55,7 +66,7 @@
                 elem: '#studentTable',
                 url: '/student/list',
                 page: false,   // 关闭分页
-                limit: 10000,  // 设置一个足够大的 limit 值以显示全部数据
+                limit: 10000,  // 显示全部数据
                 cols: [[
                     { field: 'studentID', title: '学生ID' },
                     { field: 'username', title: '账号' },
@@ -63,7 +74,12 @@
                     { field: 'studentname', title: '姓名' },
                     { field: 'studentno', title: '学号' },
                     { field: 'sex', title: '性别' },
-                    { field: 'birthYear', title: '出生年份' },
+                    {
+                        field: 'birthYear', title: '出生年份',
+                        templet: function(d) {
+                            return formatDate(d.birthYear); // 使用统一函数格式化日期
+                        }
+                    },
                     { field: 'email', title: '邮箱' },
                     { field: 'major', title: '专业' },
                     { field: 'grade', title: '年级' },
@@ -82,7 +98,7 @@
         // 初始化加载表格
         renderTable();
 
-        // 查询按钮点击事件（不再重置分页）
+        // 查询按钮点击事件
         $('.layui-btn[lay-filter="search"]').on('click', function () {
             table.reload('studentTable', {
                 where: {
@@ -103,7 +119,7 @@
             const index = layer.open({
                 type: 1,
                 title: isEdit ? '编辑学生' : '新增学生',
-                area: ['600px', '520px'],
+                area: ['600px', '550px'],
                 content: `
                   <form class="layui-form" style="padding: 20px;">
                     ${isEdit ? `<input type="hidden" name="studentID" value="${data?.studentID || ''}">` : ''}
@@ -148,8 +164,9 @@
                     <div class="layui-form-item">
                       <label class="layui-form-label">出生年份</label>
                       <div class="layui-input-block">
-                        <input type="text" name="birthYear" required lay-verify="required"
-                               value="${data?.birthYear || ''}" class="layui-input">
+                        <input type="date" name="birthYear" required lay-verify="required"
+                               value="${data?.birthYear ? formatDate(data.birthYear) : ''}"
+                               class="layui-input">
                       </div>
                     </div>
                     <div class="layui-form-item">
@@ -210,6 +227,9 @@
                                 } else {
                                     layer.msg("操作失败：" + res.message, { icon: 2 });
                                 }
+                            },
+                            error: function () {
+                                layer.msg("请求失败，请重试", { icon: 5 });
                             }
                         });
                         return false; // 阻止默认提交
